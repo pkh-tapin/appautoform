@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>SDM PKH Dynamic Engine</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
+    body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #0f172a; -webkit-tap-highlight-color: transparent; }
+    
+    .app-container { min-height: 100dvh; display: flex; flex-direction: column; }
+    .main-content { flex: 1; overflow-y: auto; width: 100%; max-w: 1200px; margin: 0 auto; padding: 1rem; padding-bottom: 6rem; }
+    @media (min-width: 768px) { .main-content { padding-bottom: 2rem; } }
+
+    .card { background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.1s ease; }
+    .card:active { transform: scale(0.98); border-color: #059669; }
+    .btn-primary { background-color: #059669; color: white; border-radius: 8px; font-weight: 700; transition: background 0.2s; letter-spacing: 0.5px; cursor: pointer; }
+    .btn-primary:active, .btn-primary:hover { background-color: #047857; }
+    
+    .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    .nav-item.active { color: #059669; border-top: 3px solid #059669; background: linear-gradient(to top, rgba(5, 150, 105, 0.05), transparent); }
+    .desktop-nav-item { color: #94a3b8; font-size: 13px; font-weight: 700; text-transform: uppercase; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer;}
+    .desktop-nav-item.active { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
+    .desktop-nav-item:hover { color: #10b981; }
+
+    input:read-only { background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; pointer-events: none; }
+    input:not(:read-only), select:not(:disabled) { background-color: #ffffff; border: 1px solid #059669; color: #0f172a; }
+    input:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2); }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+    
+    @keyframes pulse-fast { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    .animate-autosave { animation: pulse-fast 1s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+  </style>
+</head>
+<body class="bg-slate-50 relative">
+
+  <div id="setupScreen" class="absolute inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center p-4">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-in border-t-4 border-t-emerald-500">
+      <div class="text-center mb-6">
+        <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-link text-emerald-600 text-2xl"></i>
+        </div>
+        <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">Sistem Engine</h1>
+        <p class="text-xs text-slate-500 font-semibold mt-1">Sambungkan ke Database & Penyimpanan</p>
+      </div>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link Google Sheet / ID</label>
+          <input type="text" id="setupSheetInput" class="w-full p-3 rounded-lg text-sm font-medium border border-emerald-400 focus:ring-2 focus:ring-emerald-200" placeholder="https://docs.google.com/spreadsheets/d/....">
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link Folder Drive / ID</label>
+          <input type="text" id="setupFolderInput" class="w-full p-3 rounded-lg text-sm font-medium border border-emerald-400 focus:ring-2 focus:ring-emerald-200" placeholder="https://drive.google.com/drive/folders/....">
+        </div>
+        <button onclick="saveSetup()" class="w-full py-4 btn-primary text-sm uppercase tracking-widest mt-4 shadow-lg shadow-emerald-500/30">
+          <i class="fa-solid fa-plug mr-2"></i> Jalankan Mesin
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-container hidden" id="mainAppWrapper">
+    <header class="bg-slate-900 text-white p-4 shadow-md flex justify-between items-center shrink-0 z-20 sticky top-0">
+      <div class="flex items-center gap-3">
+        <button id="btnBack" onclick="goBack()" class="hidden w-9 h-9 rounded bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition cursor-pointer">
+          <i class="fa-solid fa-arrow-left"></i>
+        </button>
+        <div>
+          <h1 id="appTitle" class="text-base md:text-lg font-black tracking-tight">SISTEM DINAMIS</h1>
+          <p class="text-[10px] md:text-xs text-emerald-400 font-bold uppercase tracking-widest mt-0.5" id="appSubtitle">Monitoring Data Wilayah</p>
+        </div>
+      </div>
+
+      <div class="hidden md:flex items-center gap-2" id="desktopNav">
+        <button onclick="switchTab('monitoring')" id="dnav-monitoring" class="desktop-nav-item active"><i class="fa-solid fa-chart-pie mr-2"></i>Monitoring</button>
+        <button onclick="switchTab('input')" id="dnav-input" class="desktop-nav-item relative">
+          <i class="fa-solid fa-pen-to-square mr-2"></i>Form Input
+          <span id="badgeInputDesktop" class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-slate-900 hidden animate-pulse"></span>
+        </button>
+        <button onclick="switchTab('petunjuk')" id="dnav-petunjuk" class="desktop-nav-item"><i class="fa-solid fa-circle-info mr-2"></i>Petunjuk</button>
+        <div class="w-px h-6 bg-slate-700 mx-2"></div>
+        <button onclick="syncData()" class="w-9 h-9 rounded bg-slate-800 flex items-center justify-center hover:bg-slate-700 shadow-sm cursor-pointer mr-1" title="Refresh Data">
+          <i class="fa-solid fa-rotate text-emerald-400"></i>
+        </button>
+        <button onclick="resetSetup()" class="w-9 h-9 rounded bg-red-900/50 flex items-center justify-center hover:bg-red-800 text-red-400 cursor-pointer" title="Ganti Database">
+          <i class="fa-solid fa-plug-circle-xmark"></i>
+        </button>
+      </div>
+
+      <div class="flex md:hidden gap-2">
+        <button onclick="syncData()" class="w-9 h-9 rounded bg-slate-800 flex items-center justify-center active:bg-slate-700 shadow-sm">
+          <i class="fa-solid fa-rotate text-emerald-400"></i>
+        </button>
+        <button onclick="resetSetup()" class="w-9 h-9 rounded bg-red-900/50 flex items-center justify-center active:bg-red-800 text-red-400">
+          <i class="fa-solid fa-plug-circle-xmark"></i>
+        </button>
+      </div>
+    </header>
+
+    <main class="main-content" id="mainContainer">
+      <div id="loader" class="flex flex-col items-center justify-center h-[60vh] text-emerald-600">
+        <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
+        <p class="font-bold text-xs uppercase tracking-widest text-slate-500 mt-2">ANALISA DATABASE...</p>
+      </div>
+      <div id="errorBox" class="hidden bg-red-100 border-l-4 border-red-600 text-red-800 p-4 rounded-md mb-4 shadow-sm text-sm font-bold"></div>
+
+      <div id="tabMonitoring" class="hidden space-y-5">
+        <div id="monitoringSummary" class="max-w-3xl"></div>
+        <div id="monitoringList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <div id="tabInput" class="hidden space-y-5">
+        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex gap-3 items-start shadow-sm">
+          <i class="fa-solid fa-shield-halved text-blue-600 text-xl mt-1"></i>
+          <div>
+            <h3 class="font-bold text-blue-900 text-sm">Mode Hibrida (Master & Editable)</h3>
+            <p class="text-xs text-blue-700 mt-1 leading-relaxed">Form dibangun otomatis berdasarkan Excel Anda. Kolom A-N Terkunci, Kolom O+ Terbuka. Didukung Auto-Save 5 Detik.</p>
+          </div>
+        </div>
+        <div id="inputListTitle" class="w-full"></div>
+        <div id="inputList" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4"></div>
+      </div>
+
+      <div id="tabPetunjuk" class="hidden space-y-5 max-w-3xl mx-auto">
+        <div class="card p-6 border-t-4 border-t-emerald-600 bg-white shadow-md">
+          <h2 class="font-black text-xl text-slate-800 mb-6 uppercase tracking-tight"><i class="fa-solid fa-book text-emerald-600 mr-2"></i>Panduan SOP 2026</h2>
+          <ul class="space-y-4 text-sm text-slate-600 font-semibold mb-8">
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-1 text-emerald-600 mt-1"></i> Buka tab <strong>Form Input</strong>.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-2 text-emerald-600 mt-1"></i> Pilih Wilayah tujuan.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-circle-exclamation text-red-500 mt-1"></i> <b>PENTING:</b> Jika data tidak ada isinya, harap isi dengan tanda strip (<b>-</b>).</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-hashtag text-blue-500 mt-1"></i> <b>PENTING:</b> Untuk kolom <b>Jumlah</b>, harap HANYA diisi dengan <b>Angka</b>.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-lock text-slate-500 mt-1"></i> Kolom berlabel <b>MASTER</b> (Kolom A-N) tidak dapat diubah jika sudah terisi.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-pen text-emerald-600 mt-1"></i> Kolom berlabel <b>EDITABLE</b> (Kolom O+) bisa direvisi dan difoto ulang bebas.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-check-double text-emerald-600 mt-1"></i> Centang <b>"Tidak perlu foto"</b> jika dokumen fisik tidak ada agar status menjadi OK.</li>
+          </ul>
+        </div>
+      </div>
+    </main>
+
+    <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-between shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20 pb-safe">
+      <button onclick="switchTab('monitoring')" id="mnav-monitoring" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Monitoring</button>
+      <button onclick="switchTab('input')" id="mnav-input" class="nav-item relative">
+        <i class="fa-solid fa-pen-to-square"></i> Form Input
+        <span id="badgeInputMobile" class="absolute top-2 right-8 w-2.5 h-2.5 bg-red-500 rounded-full border border-white hidden animate-pulse"></span>
+      </button>
+      <button onclick="switchTab('petunjuk')" id="mnav-petunjuk" class="nav-item"><i class="fa-solid fa-circle-info"></i> Petunjuk</button>
+    </nav>
+  </div>
+
+  <div id="formModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex-col justify-end md:justify-center p-0 md:p-4 backdrop-blur-none md:backdrop-blur-sm">
+    <div class="bg-white w-full max-w-full md:max-w-3xl md:mx-auto rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col h-[90dvh] md:h-[85dvh] border-t-4 border-t-emerald-600 overflow-hidden">
+      
+      <div class="p-4 md:p-5 border-b border-slate-100 flex justify-between items-start bg-slate-50 relative">
+        <div class="pr-4">
+          <p class="text-[10px] md:text-xs text-emerald-600 font-bold uppercase tracking-widest mb-1" id="modalSubtitle"></p>
+          <h2 class="text-lg md:text-xl font-black text-slate-800 leading-tight uppercase" id="modalTitle"></h2>
+        </div>
+        <div class="flex items-center gap-3">
+          <span id="autoSaveStatus" class="hidden text-[10px] font-bold text-emerald-600 uppercase tracking-widest animate-autosave bg-emerald-100 px-2 py-1 rounded shadow-sm">Merekam...</span>
+          <button onclick="closeForm()" class="w-8 h-8 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-full flex justify-center items-center font-bold transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+      </div>
+      
+      <div class="p-4 md:p-6 overflow-y-auto flex-1 bg-white">
+        <form id="dataForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"></form>
+      </div>
+
+      <div class="p-4 md:p-5 border-t border-slate-100 bg-white">
+        <button onclick="manualSubmit()" id="btnSave" class="w-full py-4 btn-primary text-sm md:text-base uppercase tracking-widest shadow-lg shadow-emerald-600/30">
+          <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Tutup & Sinkronisasi Final
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // ⚠️ GANTI URL INI DENGAN URL DEPLOYMENT APPS SCRIPT ANDA
+    // =========================================================================
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyBr-XMqcVUKkfdQCYz7HCvVwgcechSXXNYocsHTNJ1U5UZoHnmAmpQNR2vcABGcM-F7g/exec';
+
+    let DB = { sheetId: '', folderId: '' };
+    let STATE = { tab: 'monitoring', view: 'KEC', kec: '', desa: '', config: null, overall: null, headers: [] };
+    
+    let autoSaveTimer = null;
+    let pendingChanges = false;
+    let activeRowIndex = null;
+
+    document.addEventListener("DOMContentLoaded", () => {
+      // Cek apakah User sudah memasukkan Link/ID sebelumnya
+      const savedDB = localStorage.getItem('pkh_dynamic_db_2026');
+      if (savedDB) {
+        DB = JSON.parse(savedDB);
+        document.getElementById('setupScreen').classList.add('hidden');
+        document.getElementById('mainAppWrapper').classList.remove('hidden');
+        syncData();
+        autoSaveTimer = setInterval(performBackgroundSync, 5000);
+      } else {
+        // Tampilkan layar setup
+        document.getElementById('setupScreen').classList.remove('hidden');
+        document.getElementById('mainAppWrapper').classList.add('hidden');
+      }
+    });
+
+    // ===================== FUNGSI SETUP ENGINE (DINAMIS) =====================
+    function extractId(input) {
+      const match = input.match(/[-\w]{25,}/);
+      return match ? match[0] : input;
+    }
+
+    function saveSetup() {
+      const sInput = document.getElementById('setupSheetInput').value.trim();
+      const fInput = document.getElementById('setupFolderInput').value.trim();
+      
+      if(!sInput || !fInput) { alert("Harap isi kedua kolom Link/ID!"); return; }
+
+      DB.sheetId = extractId(sInput);
+      DB.folderId = extractId(fInput);
+      
+      localStorage.setItem('pkh_dynamic_db_2026', JSON.stringify(DB));
+      
+      document.getElementById('setupScreen').classList.add('hidden');
+      document.getElementById('mainAppWrapper').classList.remove('hidden');
+      
+      syncData();
+      autoSaveTimer = setInterval(performBackgroundSync, 5000);
+    }
+
+    function resetSetup() {
+      if(confirm("Anda yakin ingin ganti database? Ini akan mereset tampilan sistem.")) {
+        localStorage.removeItem('pkh_dynamic_db_2026');
+        localStorage.removeItem('pkh_state_2026');
+        location.reload();
+      }
+    }
+    
+    // ===================== MESIN CACHE (ANTI-REFRESH) =====================
+    function saveStateCache() {
+      localStorage.setItem('pkh_state_2026', JSON.stringify({ tab: STATE.tab, view: STATE.view, kec: STATE.kec, desa: STATE.desa }));
+    }
+
+    function saveFormCache() {
+      if(!activeRowIndex) return;
+      let formData = {};
+      for(let i=0; i<STATE.headers.length; i++) {
+        let skipCb = document.getElementById(`skipPhoto_${i}`);
+        let el = document.getElementById(`inputCol_${i}`);
+        if (skipCb) formData[`skip_${i}`] = skipCb.checked;
+        if (el && el.type !== 'file') formData[i] = el.value;
+      }
+      localStorage.setItem(`pkh_form_${activeRowIndex}`, JSON.stringify(formData));
+      pendingChanges = true; 
+    }
+
+    function markFormChanged() { saveFormCache(); }
+
+    function toggleSkipPhoto(index) {
+       const isSkipped = document.getElementById(`skipPhoto_${index}`).checked;
+       const container = document.getElementById(`photoWrap_${index}`);
+       if(isSkipped) {
+          container.style.opacity = '0.3';
+          container.style.pointerEvents = 'none';
+          document.getElementById(`inputCol_${index}`).value = '-'; 
+          document.getElementById(`lbl_file_${index}`).innerText = '';
+       } else {
+          container.style.opacity = '1';
+          container.style.pointerEvents = 'auto';
+       }
+       markFormChanged(); 
+    }
+
+    async function apiFetch(action, params = {}) {
+      const url = new URL(API_URL);
+      url.searchParams.append('action', action);
+      url.searchParams.append('sheetId', DB.sheetId); // Inject DB Dinamis
+      Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
+      const res = await fetch(url, { method: 'GET', redirect: 'follow' });
+      return await res.json();
+    }
+
+    async function apiPost(action, dataPayload) {
+      dataPayload.sheetId = DB.sheetId; // Inject DB Dinamis
+      dataPayload.folderId = DB.folderId; // Inject DB Dinamis
+      
+      const res = await fetch(API_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, data: dataPayload }),
+        redirect: 'follow'
+      });
+      return await res.json();
+    }
+
+    function compressImage(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = event => {
+          const img = new Image();
+          img.src = event.target.result;
+          img.onload = () => {
+            const canvas = document.createElement('canvas');
+            const TARGET_WIDTH = 80; 
+            const TARGET_HEIGHT = 130;
+            canvas.width = TARGET_WIDTH;
+            canvas.height = TARGET_HEIGHT;
+            const ctx = canvas.getContext('2d');
+            const imgRatio = img.width / img.height;
+            const targetRatio = TARGET_WIDTH / TARGET_HEIGHT;
+            let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
+            if (imgRatio > targetRatio) {
+              drawHeight = TARGET_HEIGHT;
+              drawWidth = img.width * (TARGET_HEIGHT / img.height);
+              offsetX = (TARGET_WIDTH - drawWidth) / 2;
+            } else {
+              drawWidth = TARGET_WIDTH;
+              drawHeight = img.height * (TARGET_WIDTH / img.width);
+              offsetY = (TARGET_HEIGHT - drawHeight) / 2;
+            }
+            ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
+            resolve(canvas.toDataURL('image/jpeg', 0.9)); 
+          };
+          img.onerror = () => reject(new Error("Gagal memuat gambar"));
+        };
+        reader.onerror = () => reject(new Error("Gagal membaca file"));
+      });
+    }
+
+    async function performBackgroundSync() {
+      const modal = document.getElementById('formModal');
+      if (!modal.classList.contains('hidden') && pendingChanges && activeRowIndex) {
+        const statusUI = document.getElementById('autoSaveStatus');
+        statusUI.classList.remove('hidden'); 
+        try {
+          const updates = new Array(STATE.headers.length).fill("");
+          for(let i=0; i<STATE.headers.length; i++) {
+            const skipCb = document.getElementById(`skipPhoto_${i}`);
+            const input = document.getElementById(`inputCol_${i}`);
+            if (skipCb && skipCb.checked) {
+              updates[i] = "-"; 
+            } else if (input) {
+              if (input.type === 'file') {
+                updates[i] = input.getAttribute('data-old') || "";
+              } else {
+                updates[i] = input.value;
+              }
+            }
+          }
+          await apiPost('submitData', { rowIndex: activeRowIndex, updates });
+          pendingChanges = false; 
+        } catch (e) {
+          console.error("Auto-Save error:", e);
+        } finally {
+          setTimeout(() => statusUI.classList.add('hidden'), 1000);
+        }
+      }
+    }
+
+    function syncData() {
+      document.getElementById('loader').classList.remove('hidden');
+      ['Monitoring', 'Input', 'Petunjuk'].forEach(t => document.getElementById('tab'+t).classList.add('hidden'));
+      document.getElementById('errorBox').classList.add('hidden');
+      apiFetch('getConfig').then(res => {
+        document.getElementById('loader').classList.add('hidden');
+        if(res.status === 'error') throw new Error(res.message);
+        STATE.config = res.stats; STATE.overall = res.overall; STATE.headers = res.headers;
+        const hasEmpty = res.overall.kosong > 0;
+        document.getElementById('badgeInputDesktop').style.display = hasEmpty ? 'block' : 'none';
+        document.getElementById('badgeInputMobile').style.display = hasEmpty ? 'block' : 'none';
+        const savedCache = localStorage.getItem('pkh_state_2026');
+        if (savedCache) {
+          const s = JSON.parse(savedCache);
+          STATE.tab = s.tab; STATE.view = s.view; STATE.kec = s.kec; STATE.desa = s.desa;
+        }
+        switchTab(STATE.tab, true); 
+      }).catch(err => {
+        document.getElementById('loader').classList.add('hidden');
+        document.getElementById('errorBox').innerHTML = `<i class="fa-solid fa-triangle-exclamation mr-2"></i> ${err.message}`;
+        document.getElementById('errorBox').classList.remove('hidden');
+      });
+    }
+
+    function switchTab(tabName, isRestore = false) {
+      if (STATE.tab === tabName && !isRestore && STATE.view === 'KEC') return;
+      STATE.tab = tabName; 
+      if (!isRestore) STATE.view = 'KEC'; 
+      ['monitoring', 'input', 'petunjuk'].forEach(t => {
+        document.getElementById(`mnav-${t}`).classList.remove('active');
+        document.getElementById(`dnav-${t}`).classList.remove('active');
+        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
+      });
+      document.getElementById(`mnav-${STATE.tab}`).classList.add('active');
+      document.getElementById(`dnav-${STATE.tab}`).classList.add('active');
+      document.getElementById(`tab${STATE.tab.charAt(0).toUpperCase() + STATE.tab.slice(1)}`).classList.remove('hidden');
+      document.getElementById('btnBack').classList.add('hidden');
+      document.getElementById('appTitle').innerText = 'SISTEM DINAMIS';
+      document.getElementById('appSubtitle').innerText = 'Monitoring Data Wilayah';
+      document.getElementById('inputListTitle').innerHTML = '';
+      if (STATE.tab === 'monitoring') {
+        if (isRestore && STATE.view === 'DESA') renderMonitoringDesa(STATE.kec);
+        else renderMonitoringKec();
+      } else if (STATE.tab === 'input') {
+        if (isRestore && STATE.view === 'ROWS') loadInputRows(STATE.kec, STATE.desa);
+        else if (isRestore && STATE.view === 'DESA') renderInputDesa(STATE.kec);
+        else renderInputKec();
+      }
+      saveStateCache(); 
+    }
+
+    function goBack() {
+      if (STATE.view === 'ROWS') { STATE.tab === 'input' ? renderInputDesa(STATE.kec) : renderMonitoringDesa(STATE.kec); } 
+      else if (STATE.view === 'DESA') { STATE.tab === 'input' ? renderInputKec() : renderMonitoringKec(); }
+    }
+
+    function renderStats(d) {
+      return `
+        <div class="flex flex-wrap gap-2 mt-2">
+          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-slate-100 text-slate-600 px-2 py-1 rounded">ALL: ${d.total}</span>
+          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100">KSG: ${d.kosong}</span>
+          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100">OK: ${d.isi}</span>
+        </div>`;
+    }
+
+    function renderMonitoringKec() {
+      STATE.view = 'KEC'; document.getElementById('btnBack').classList.add('hidden');
+      document.getElementById('monitoringSummary').innerHTML = `
+        <div class="bg-slate-900 text-white rounded-xl p-6 shadow-lg relative overflow-hidden mb-6">
+          <div class="absolute right-0 top-0 w-40 h-40 bg-emerald-600 rounded-full blur-3xl opacity-20"></div>
+          <h2 class="text-[10px] md:text-xs text-emerald-400 font-bold tracking-widest uppercase mb-6">Statistik Total Keseluruhan</h2>
+          <div class="flex justify-between items-end">
+            <div><p class="text-[10px] md:text-xs text-slate-400 font-semibold mb-1">TOTAL DATA</p><p class="font-black text-2xl md:text-3xl">${STATE.overall.total}</p></div>
+            <div class="text-right"><p class="text-[10px] md:text-xs text-red-400 font-semibold mb-1">KOSONG</p><p class="font-black text-xl md:text-2xl">${STATE.overall.kosong}</p></div>
+            <div class="text-right"><p class="text-[10px] md:text-xs text-emerald-400 font-semibold mb-1">SELESAI</p><p class="font-black text-xl md:text-2xl">${STATE.overall.isi}</p></div>
+          </div>
+        </div>`;
+      const listDiv = document.getElementById('monitoringList');
+      listDiv.innerHTML = '<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sebaran Wilayah</h3></div>';
+      Object.keys(STATE.config).sort().forEach(kec => {
+        listDiv.innerHTML += `<div onclick="renderMonitoringDesa('${kec}')" class="card p-5 flex justify-between items-center cursor-pointer hover:border-emerald-500"><div><h3 class="font-black text-slate-800 text-sm">${kec}</h3>${renderStats(STATE.config[kec])}</div><i class="fa-solid fa-chevron-right text-slate-300"></i></div>`;
+      });
+      saveStateCache();
+    }
+
+    function renderMonitoringDesa(kec) {
+      STATE.view = 'DESA'; STATE.kec = kec;
+      document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec;
+      document.getElementById('appSubtitle').innerText = 'Daftar Sub-Wilayah';
+      document.getElementById('monitoringSummary').innerHTML = ''; 
+      const listDiv = document.getElementById('monitoringList');
+      listDiv.innerHTML = `<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sub-Wilayah di ${kec}</h3></div>`;
+      Object.keys(STATE.config[kec].desas).sort().forEach(desa => {
+        listDiv.innerHTML += `<div class="card p-5 border-l-4 border-l-slate-800 cursor-default"><h3 class="font-bold text-slate-800 text-sm">${desa}</h3>${renderStats(STATE.config[kec].desas[desa])}</div>`;
+      });
+      saveStateCache();
+    }
+
+    function renderInputKec() {
+      STATE.view = 'KEC'; document.getElementById('btnBack').classList.add('hidden');
+      document.getElementById('inputListTitle').innerHTML = '';
+      const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
+      Object.keys(STATE.config).sort().forEach(kec => {
+        listDiv.innerHTML += `<div onclick="renderInputDesa('${kec}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer hover:border-emerald-500 transition"><div><h3 class="font-black text-slate-800 text-sm md:text-base">${kec}</h3></div><div class="bg-emerald-50 w-8 h-8 rounded-full flex items-center justify-center text-emerald-600"><i class="fa-solid fa-arrow-right"></i></div></div>`;
+      });
+      saveStateCache();
+    }
+
+    function renderInputDesa(kec) {
+      STATE.view = 'DESA'; STATE.kec = kec;
+      document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec;
+      document.getElementById('appSubtitle').innerText = 'Pilih Sub-Wilayah';
+      document.getElementById('inputListTitle').innerHTML = `<h3 class="text-[11px] font-black text-emerald-700 uppercase tracking-widest pl-1 mb-1 mt-2">Pilih Wilayah ${kec}</h3>`;
+      const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
+      Object.keys(STATE.config[kec].desas).sort().forEach(desa => {
+        let kosong = STATE.config[kec].desas[desa].kosong;
+        listDiv.innerHTML += `<div onclick="loadInputRows('${kec}', '${desa}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer border-l-4 border-l-emerald-600 transition"><div><h3 class="font-bold text-slate-800 text-sm md:text-base">${desa}</h3><p class="text-[10px] md:text-xs text-red-500 font-bold mt-1">${kosong} Data Belum Lengkap</p></div><button class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold shadow-sm transition">BUKA</button></div>`;
+      });
+      saveStateCache();
+    }
+
+    function loadInputRows(kec, desa) {
+      STATE.view = 'ROWS'; STATE.desa = desa;
+      document.getElementById('appTitle').innerText = desa;
+      document.getElementById('appSubtitle').innerText = 'Daftar Data';
+      document.getElementById('inputListTitle').innerHTML = '';
+      const listDiv = document.getElementById('inputList');
+      listDiv.innerHTML = `<div class="col-span-full flex flex-col items-center py-12 text-emerald-600"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><p class="text-xs font-bold uppercase tracking-widest">Mencari Data Utama...</p></div>`;
+      apiFetch('getRows', {kec, desa}).then(res => {
+        if(res.status === 'error') throw new Error(res.message);
+        listDiv.innerHTML = '';
+        res.data.forEach(item => {
+          const isDone = item.status === 'SELESAI';
+          listDiv.innerHTML += `<div class="card p-4 flex justify-between items-center bg-white ${isDone ? 'opacity-70 border-slate-200' : 'border-l-4 border-l-blue-600 shadow-md'}"><div class="overflow-hidden mr-3 flex-1"><div class="flex gap-2 mb-1"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest bg-slate-100 px-1.5 py-0.5 rounded">Baris ${item.rowIndex}</p><p class="text-[9px] text-emerald-700 font-bold uppercase tracking-widest bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">RT ${item.rt}</p></div><h3 class="font-bold text-slate-900 text-sm md:text-base truncate uppercase">${item.namaPengurus}</h3></div><button onclick='openForm(${JSON.stringify(item)})' class="${isDone ? 'bg-slate-200 text-slate-600' : 'btn-primary'} px-4 py-2 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest hover:scale-105 transition">EDIT FORM</button></div>`;
+        });
+        saveStateCache();
+      }).catch(err => {
+        listDiv.innerHTML = `<div class="col-span-full text-center text-red-600 font-bold p-4 bg-red-50 rounded">Gagal mengambil data: ${err.message}</div>`;
+      });
+    }
+
+    function openForm(item) {
+      activeRowIndex = item.rowIndex; pendingChanges = false; 
+      const cachedData = JSON.parse(localStorage.getItem(`pkh_form_${activeRowIndex}`)) || {};
+      document.getElementById('modalTitle').innerText = item.namaPengurus;
+      document.getElementById('modalSubtitle').innerText = `BARIS ${item.rowIndex} • RT ${item.rt} • ${STATE.desa}`;
+      const form = document.getElementById('dataForm');
+      form.innerHTML = `<input type="hidden" id="formRowIndex" value="${item.rowIndex}">`;
+      
+      STATE.headers.forEach((h, i) => {
+        let val = cachedData[i] !== undefined ? cachedData[i] : (item.data[i] || "");
+        const isColumnAN = i <= 13; 
+        const hasData = item.data[i].toString().trim() !== "";
+        const isLocked = isColumnAN && hasData; 
+        const isPhoto = h.toLowerCase().includes('foto');
+        const isKesesuaian = h.toUpperCase().includes('KESE');
+
+        let fieldHtml = '';
+        if (isPhoto) {
+          const isChecked = cachedData[`skip_${i}`] ? 'checked' : '';
+          let oldLinkHtml = '';
+          if (val !== "" && val !== "-" && val.includes("http")) {
+              oldLinkHtml = `<a href="${val}" target="_blank" class="text-blue-600 underline text-[10px] ml-2 bg-blue-50 px-2 py-1 rounded font-bold hover:bg-blue-100 transition"><i class="fa-solid fa-up-right-from-square mr-1"></i>Cek Foto</a>`;
+          } else if (val === "-") {
+              oldLinkHtml = `<span class="text-slate-400 text-[10px] ml-2 bg-slate-100 px-2 py-1 rounded font-bold"><i class="fa-solid fa-ban mr-1"></i>Abaikan</span>`;
+          }
+          if (isLocked) {
+             fieldHtml = `<div class="w-full flex items-center justify-center gap-2 p-3 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-xs font-bold"><i class="fa-solid fa-lock text-slate-400"></i> MASTER TERKUNCI</div>`;
+          } else {
+             fieldHtml = `<div id="photoWrap_${i}" class="photo-wrap w-full mt-1"><label class="flex flex-col items-center justify-center w-full p-3 border border-emerald-400 border-dashed rounded-lg bg-emerald-50 text-emerald-700 cursor-pointer hover:bg-emerald-100 transition active:scale-95"><div class="flex items-center gap-2"><i class="fa-solid fa-camera text-lg"></i><span class="text-xs md:text-sm font-bold">Pilih / Ganti Foto</span></div><input type="file" accept="image/*" id="inputCol_${i}" data-old='${val}' class="hidden" onchange="document.getElementById('lbl_file_${i}').innerText = this.files[0] ? this.files[0].name : ''; markFormChanged();"></label><div id="lbl_file_${i}" class="text-[10px] text-emerald-600 font-bold mt-1 text-center truncate"></div></div><label class="flex items-center gap-2 mt-2 cursor-pointer bg-slate-50 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition w-full"><input type="checkbox" id="skipPhoto_${i}" onchange="toggleSkipPhoto(${i})" ${isChecked} class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"><span class="text-xs font-bold text-slate-700">Tandai: Tidak perlu foto</span></label>`;
+          }
+        } else if (isKesesuaian && !isLocked) {
+          fieldHtml = `
+            <select id="inputCol_${i}" onchange="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:outline-none bg-white">
+              <option value="" ${val === "" ? "selected" : ""}>-- Pilih Status --</option>
+              <option value="SESUAI" ${val === "SESUAI" ? "selected" : ""}>SESUAI</option>
+              <option value="TIDAK SESUAI" ${val === "TIDAK SESUAI" ? "selected" : ""}>TIDAK SESUAI</option>
+            </select>`;
+        } else if (isKesesuaian && isLocked) {
+          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" readonly class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:outline-none bg-slate-50 text-slate-500">`;
+        } else {
+          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" ${isLocked ? 'readonly' : 'oninput="markFormChanged()"'} class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:outline-none" placeholder="Ketik data...">`;
+        }
+        
+        form.innerHTML += `<div class="flex flex-col gap-1.5 p-3 bg-white border border-slate-200 rounded-xl shadow-sm"><label class="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between"><span>${h}</span>${isLocked ? '<span class="text-slate-400"><i class="fa-solid fa-lock mr-1"></i>MASTER</span>' : '<span class="text-blue-600"><i class="fa-solid fa-pen-to-square mr-1"></i>EDITABLE</span>'}</label>${fieldHtml}</div>`;
+      });
+      document.getElementById('formModal').classList.remove('hidden'); document.getElementById('formModal').classList.add('flex');
+      setTimeout(() => { STATE.headers.forEach((h, i) => { const cb = document.getElementById(`skipPhoto_${i}`); if (cb && cb.checked) toggleSkipPhoto(i); }); }, 50);
+    }
+
+    function closeForm() { activeRowIndex = null; document.getElementById('formModal').classList.add('hidden'); document.getElementById('formModal').classList.remove('flex'); document.getElementById('autoSaveStatus').classList.add('hidden'); }
+
+    async function manualSubmit() {
+      const btn = document.getElementById('btnSave'); const oldHtml = btn.innerHTML;
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENYINKRONKAN...'; btn.disabled = true;
+      try {
+        const updates = new Array(STATE.headers.length).fill("");
+        for(let i=0; i<STATE.headers.length; i++) {
+          const skipCb = document.getElementById(`skipPhoto_${i}`); const input = document.getElementById(`inputCol_${i}`);
+          if (skipCb && skipCb.checked) { updates[i] = "-"; } else if (input) {
+            if(input.type === 'file') {
+               if(input.files.length > 0) {
+                 btn.innerHTML = '<i class="fa-solid fa-compress fa-beat mr-2"></i> MEMOTONG FOTO...';
+                 const compressedBase64 = await compressImage(input.files[0]);
+                 updates[i] = { type: 'file', filename: input.files[0].name, mimeType: 'image/jpeg', base64: compressedBase64.split(',')[1] };
+               } else { updates[i] = input.getAttribute('data-old') || ""; }
+            } else { updates[i] = input.value; }
+          }
+        }
+        const res = await apiPost('submitData', { rowIndex: activeRowIndex, updates });
+        if(res.status === 'error') throw new Error(res.message);
+        localStorage.removeItem(`pkh_form_${activeRowIndex}`);
+        alert("✅ SUKSES: Sinkronisasi Final Berhasil!"); closeForm(); syncData(); 
+      } catch (err) { alert("❌ GAGAL: " + err.message); } finally { btn.innerHTML = oldHtml; btn.disabled = false; }
+    }
+  </script>
+</body>
+</html>
