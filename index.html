@@ -3,31 +3,32 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  <title>SDM PKH Dynamic Engine</title>
+  <title>SDM PKH Tapin | Pro Admin</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;900&display=swap');
-    body { background-color: #f8fafc; font-family: 'Inter', sans-serif; color: #0f172a; -webkit-tap-highlight-color: transparent; }
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap');
+    body { background-color: #f1f5f9; font-family: 'Inter', sans-serif; color: #0f172a; -webkit-tap-highlight-color: transparent; }
     
     .app-container { min-height: 100dvh; display: flex; flex-direction: column; }
     .main-content { flex: 1; overflow-y: auto; width: 100%; max-w: 1200px; margin: 0 auto; padding: 1rem; padding-bottom: 6rem; }
     @media (min-width: 768px) { .main-content { padding-bottom: 2rem; } }
 
-    .card { background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); transition: transform 0.1s ease; }
-    .card:active { transform: scale(0.98); border-color: #059669; }
-    .btn-primary { background-color: #059669; color: white; border-radius: 8px; font-weight: 700; transition: background 0.2s; letter-spacing: 0.5px; cursor: pointer; }
-    .btn-primary:active, .btn-primary:hover { background-color: #047857; }
+    .card { background-color: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; box-shadow: 0 4px 10px -2px rgba(0,0,0,0.05); transition: transform 0.1s ease, border-color 0.2s; }
+    .card:active { transform: scale(0.98); border-color: #2563eb; }
+    .btn-primary { background-color: #2563eb; color: white; border-radius: 8px; font-weight: 700; transition: background 0.2s; letter-spacing: 0.5px; cursor: pointer; }
+    .btn-primary:active, .btn-primary:hover { background-color: #1d4ed8; }
     
-    .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #94a3b8; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
-    .nav-item.active { color: #059669; border-top: 3px solid #059669; background: linear-gradient(to top, rgba(5, 150, 105, 0.05), transparent); }
+    /* 4-Tab Navigation */
+    .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #94a3b8; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s; }
+    .nav-item.active { color: #2563eb; border-top: 3px solid #2563eb; background: linear-gradient(to top, rgba(37, 99, 235, 0.05), transparent); }
     .desktop-nav-item { color: #94a3b8; font-size: 13px; font-weight: 700; text-transform: uppercase; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer;}
-    .desktop-nav-item.active { background-color: rgba(16, 185, 129, 0.1); color: #10b981; }
-    .desktop-nav-item:hover { color: #10b981; }
+    .desktop-nav-item.active { background-color: rgba(37, 99, 235, 0.1); color: #2563eb; }
+    .desktop-nav-item:hover { color: #2563eb; }
 
-    input:read-only { background-color: #f1f5f9; color: #64748b; border: 1px solid #cbd5e1; pointer-events: none; }
-    input:not(:read-only), select:not(:disabled) { background-color: #ffffff; border: 1px solid #059669; color: #0f172a; }
-    input:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.2); }
+    input:read-only { background-color: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; pointer-events: none; }
+    input:not(:read-only), select:not(:disabled) { background-color: #ffffff; border: 1px solid #2563eb; color: #0f172a; }
+    input:focus, select:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.2); }
     ::-webkit-scrollbar { width: 4px; }
     ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
     
@@ -38,75 +39,67 @@
 <body class="bg-slate-50 relative">
 
   <div id="setupScreen" class="absolute inset-0 bg-slate-900 z-[100] flex flex-col items-center justify-center p-4">
-    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-in border-t-4 border-t-emerald-500">
+    <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-6 md:p-8 animate-fade-in border-t-4 border-t-blue-600">
       <div class="text-center mb-6">
-        <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
-          <i class="fa-solid fa-link text-emerald-600 text-2xl"></i>
+        <div class="bg-blue-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-3">
+          <i class="fa-solid fa-server text-blue-600 text-2xl"></i>
         </div>
         <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">Sistem Engine</h1>
-        <p class="text-xs text-slate-500 font-semibold mt-1">Sambungkan ke Database & Penyimpanan</p>
+        <p class="text-xs text-slate-500 font-semibold mt-1">Sambungkan ke Database Master</p>
       </div>
-
       <div class="space-y-4">
         <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link Google Sheet / ID</label>
-          <input type="text" id="setupSheetInput" class="w-full p-3 rounded-lg text-sm font-medium border border-emerald-400 focus:ring-2 focus:ring-emerald-200" placeholder="https://docs.google.com/spreadsheets/d/....">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link/ID Google Sheet</label>
+          <input type="text" id="setupSheetInput" class="w-full p-3 rounded-lg text-sm font-medium border border-blue-400 focus:ring-2 focus:ring-blue-200" placeholder="https://docs.google.com/spreadsheets/d/....">
         </div>
         <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link Folder Drive / ID</label>
-          <input type="text" id="setupFolderInput" class="w-full p-3 rounded-lg text-sm font-medium border border-emerald-400 focus:ring-2 focus:ring-emerald-200" placeholder="https://drive.google.com/drive/folders/....">
+          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link/ID Folder Drive</label>
+          <input type="text" id="setupFolderInput" class="w-full p-3 rounded-lg text-sm font-medium border border-blue-400 focus:ring-2 focus:ring-blue-200" placeholder="https://drive.google.com/drive/folders/....">
         </div>
-        <button onclick="saveSetup()" class="w-full py-4 btn-primary text-sm uppercase tracking-widest mt-4 shadow-lg shadow-emerald-500/30">
-          <i class="fa-solid fa-plug mr-2"></i> Jalankan Mesin
+        <button onclick="saveSetup()" class="w-full py-4 btn-primary text-sm uppercase tracking-widest mt-4 shadow-lg shadow-blue-500/30">
+          <i class="fa-solid fa-plug mr-2"></i> KONEKSIKAN SISTEM
         </button>
       </div>
     </div>
   </div>
 
   <div class="app-container hidden" id="mainAppWrapper">
-    <header class="bg-slate-900 text-white p-4 shadow-md flex justify-between items-center shrink-0 z-20 sticky top-0">
+    <header class="bg-blue-700 text-white p-4 shadow-md flex justify-between items-center shrink-0 z-20 sticky top-0">
       <div class="flex items-center gap-3">
-        <button id="btnBack" onclick="goBack()" class="hidden w-9 h-9 rounded bg-slate-800 flex items-center justify-center hover:bg-slate-700 transition cursor-pointer">
+        <button id="btnBack" onclick="goBack()" class="hidden w-9 h-9 rounded bg-blue-800 flex items-center justify-center hover:bg-blue-900 transition cursor-pointer border border-blue-500">
           <i class="fa-solid fa-arrow-left"></i>
         </button>
         <div>
-          <h1 id="appTitle" class="text-base md:text-lg font-black tracking-tight">SISTEM DINAMIS</h1>
-          <p class="text-[10px] md:text-xs text-emerald-400 font-bold uppercase tracking-widest mt-0.5" id="appSubtitle">Monitoring Data Wilayah</p>
+          <h1 id="appTitle" class="text-base md:text-lg font-black tracking-tight">PKH APP CENTER</h1>
+          <p class="text-[10px] md:text-xs text-blue-200 font-bold uppercase tracking-widest mt-0.5" id="appSubtitle">SDM PKH TAPIN</p>
         </div>
       </div>
 
       <div class="hidden md:flex items-center gap-2" id="desktopNav">
-        <button onclick="switchTab('monitoring')" id="dnav-monitoring" class="desktop-nav-item active"><i class="fa-solid fa-chart-pie mr-2"></i>Monitoring</button>
+        <button onclick="switchTab('monitoring')" id="dnav-monitoring" class="desktop-nav-item active"><i class="fa-solid fa-chart-pie mr-2"></i>Dashboard</button>
         <button onclick="switchTab('input')" id="dnav-input" class="desktop-nav-item relative">
           <i class="fa-solid fa-pen-to-square mr-2"></i>Form Input
-          <span id="badgeInputDesktop" class="absolute top-1 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-slate-900 hidden animate-pulse"></span>
+          <span id="badgeInputDesktop" class="absolute top-1 right-1 w-2.5 h-2.5 bg-rose-500 rounded-full border border-blue-900 hidden animate-pulse"></span>
         </button>
-        <button onclick="switchTab('petunjuk')" id="dnav-petunjuk" class="desktop-nav-item"><i class="fa-solid fa-circle-info mr-2"></i>Petunjuk</button>
-        <div class="w-px h-6 bg-slate-700 mx-2"></div>
-        <button onclick="syncData()" class="w-9 h-9 rounded bg-slate-800 flex items-center justify-center hover:bg-slate-700 shadow-sm cursor-pointer mr-1" title="Refresh Data">
-          <i class="fa-solid fa-rotate text-emerald-400"></i>
-        </button>
-        <button onclick="resetSetup()" class="w-9 h-9 rounded bg-red-900/50 flex items-center justify-center hover:bg-red-800 text-red-400 cursor-pointer" title="Ganti Database">
-          <i class="fa-solid fa-plug-circle-xmark"></i>
+        <button onclick="switchTab('petunjuk')" id="dnav-petunjuk" class="desktop-nav-item"><i class="fa-solid fa-book mr-2"></i>Petunjuk</button>
+        <button onclick="switchTab('admin')" id="dnav-admin" class="desktop-nav-item"><i class="fa-solid fa-user-shield mr-2"></i>Admin Panel</button>
+        <div class="w-px h-6 bg-blue-500 mx-2"></div>
+        <button onclick="syncData()" class="w-9 h-9 rounded bg-blue-800 flex items-center justify-center hover:bg-blue-900 shadow-sm cursor-pointer border border-blue-500" title="Refresh Data">
+          <i class="fa-solid fa-rotate text-white"></i>
         </button>
       </div>
 
-      <div class="flex md:hidden gap-2">
-        <button onclick="syncData()" class="w-9 h-9 rounded bg-slate-800 flex items-center justify-center active:bg-slate-700 shadow-sm">
-          <i class="fa-solid fa-rotate text-emerald-400"></i>
-        </button>
-        <button onclick="resetSetup()" class="w-9 h-9 rounded bg-red-900/50 flex items-center justify-center active:bg-red-800 text-red-400">
-          <i class="fa-solid fa-plug-circle-xmark"></i>
-        </button>
-      </div>
+      <button onclick="syncData()" class="md:hidden w-9 h-9 rounded bg-blue-800 flex items-center justify-center active:bg-blue-900 shadow-sm border border-blue-500">
+        <i class="fa-solid fa-rotate text-white"></i>
+      </button>
     </header>
 
     <main class="main-content" id="mainContainer">
-      <div id="loader" class="flex flex-col items-center justify-center h-[60vh] text-emerald-600">
+      <div id="loader" class="flex flex-col items-center justify-center h-[60vh] text-blue-600">
         <i class="fa-solid fa-circle-notch fa-spin text-4xl mb-4"></i>
-        <p class="font-bold text-xs uppercase tracking-widest text-slate-500 mt-2">ANALISA DATABASE...</p>
+        <p class="font-bold text-xs uppercase tracking-widest text-slate-500 mt-2">MENGAMBIL DATA SERVER...</p>
       </div>
-      <div id="errorBox" class="hidden bg-red-100 border-l-4 border-red-600 text-red-800 p-4 rounded-md mb-4 shadow-sm text-sm font-bold"></div>
+      <div id="errorBox" class="hidden bg-rose-100 border-l-4 border-rose-600 text-rose-800 p-4 rounded-md mb-4 shadow-sm text-sm font-bold"></div>
 
       <div id="tabMonitoring" class="hidden space-y-5">
         <div id="monitoringSummary" class="max-w-3xl"></div>
@@ -114,11 +107,11 @@
       </div>
 
       <div id="tabInput" class="hidden space-y-5">
-        <div class="bg-blue-50 border border-blue-200 p-4 rounded-xl flex gap-3 items-start shadow-sm">
-          <i class="fa-solid fa-shield-halved text-blue-600 text-xl mt-1"></i>
+        <div class="bg-slate-800 border border-slate-700 p-4 rounded-xl flex gap-3 items-start shadow-md text-white">
+          <i class="fa-solid fa-bolt text-blue-400 text-xl mt-1"></i>
           <div>
-            <h3 class="font-bold text-blue-900 text-sm">Mode Hibrida (Master & Editable)</h3>
-            <p class="text-xs text-blue-700 mt-1 leading-relaxed">Form dibangun otomatis berdasarkan Excel Anda. Kolom A-N Terkunci, Kolom O+ Terbuka. Didukung Auto-Save 5 Detik.</p>
+            <h3 class="font-bold text-white text-sm">Mode Operasi Lapangan</h3>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">Form dibangun otomatis. Kolom Master A-N terkunci. Didukung <b>Auto-Save 5 Detik</b>.</p>
           </div>
         </div>
         <div id="inputListTitle" class="w-full"></div>
@@ -126,52 +119,81 @@
       </div>
 
       <div id="tabPetunjuk" class="hidden space-y-5 max-w-3xl mx-auto">
-        <div class="card p-6 border-t-4 border-t-emerald-600 bg-white shadow-md">
-          <h2 class="font-black text-xl text-slate-800 mb-6 uppercase tracking-tight"><i class="fa-solid fa-book text-emerald-600 mr-2"></i>Panduan SOP 2026</h2>
-          <ul class="space-y-4 text-sm text-slate-600 font-semibold mb-8">
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-1 text-emerald-600 mt-1"></i> Buka tab <strong>Form Input</strong>.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-2 text-emerald-600 mt-1"></i> Pilih Wilayah tujuan.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-circle-exclamation text-red-500 mt-1"></i> <b>PENTING:</b> Jika data tidak ada isinya, harap isi dengan tanda strip (<b>-</b>).</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-hashtag text-blue-500 mt-1"></i> <b>PENTING:</b> Untuk kolom <b>Jumlah</b>, harap HANYA diisi dengan <b>Angka</b>.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-lock text-slate-500 mt-1"></i> Kolom berlabel <b>MASTER</b> (Kolom A-N) tidak dapat diubah jika sudah terisi.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-pen text-emerald-600 mt-1"></i> Kolom berlabel <b>EDITABLE</b> (Kolom O+) bisa direvisi dan difoto ulang bebas.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-check-double text-emerald-600 mt-1"></i> Centang <b>"Tidak perlu foto"</b> jika dokumen fisik tidak ada agar status menjadi OK.</li>
+        <div class="card p-6 border-t-4 border-t-blue-600 bg-white shadow-md">
+          <h2 class="font-black text-xl text-slate-800 mb-6 uppercase tracking-tight"><i class="fa-solid fa-book text-blue-600 mr-2"></i>Panduan SOP 2026</h2>
+          <ul class="space-y-4 text-sm text-slate-600 font-medium mb-8">
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-1 text-blue-600 mt-1"></i> Buka tab <strong>Form Input</strong>.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-2 text-blue-600 mt-1"></i> Pilih Wilayah tujuan.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-circle-exclamation text-rose-500 mt-1"></i> <b>PENTING:</b> Jika data kosong, harap isi dengan tanda strip (<b>-</b>).</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-hashtag text-blue-500 mt-1"></i> <b>PENTING:</b> Kolom <b>Jumlah</b>, wajib diisi dengan <b>Angka</b>.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-lock text-slate-400 mt-1"></i> Kolom berlabel <b>MASTER</b> (Kolom A-N) terkunci permanen.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-pen text-blue-600 mt-1"></i> Kolom berlabel <b>EDITABLE</b> (Kolom O+) bebas revisi.</li>
           </ul>
+        </div>
+      </div>
+
+      <div id="tabAdmin" class="hidden space-y-5 max-w-3xl mx-auto">
+        <div class="bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-700 text-white">
+          <h2 class="font-black text-lg mb-2"><i class="fa-solid fa-user-shield text-blue-400 mr-2"></i>Admin Control Panel</h2>
+          <p class="text-xs text-slate-400 mb-6">Pusat kendali mesin dinamis dan manajemen cache aplikasi.</p>
+          
+          <div class="space-y-4">
+            <div class="bg-slate-800 p-4 rounded-lg border border-slate-600">
+              <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Koneksi Database Saat Ini</h3>
+              <p class="text-xs text-slate-300 break-all"><i class="fa-solid fa-file-excel mr-2 text-emerald-500"></i><span id="adminSheetId"></span></p>
+              <p class="text-xs text-slate-300 break-all mt-2"><i class="fa-solid fa-folder-open mr-2 text-blue-400"></i><span id="adminFolderId"></span></p>
+            </div>
+
+            <div class="bg-blue-900/50 p-4 rounded-lg border border-blue-500/50">
+              <h3 class="text-xs font-bold text-blue-300 mb-1"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Dynamic Form Builder</h3>
+              <p class="text-[11px] text-slate-300 leading-relaxed">Aplikasi ini menganut sistem <i>Headless Database</i>. Untuk <b>menambah form, mengubah kolom, atau menambah pilihan</b>, Anda hanya perlu menambahkannya langsung di dalam <b>Google Sheet</b>. Aplikasi akan mendeteksinya secara otomatis dan merakit UI-nya secara realtime.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+              <button onclick="clearLocalCache()" class="bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-broom"></i> Bersihkan Cache HP
+              </button>
+              <button onclick="resetSetup()" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 border border-rose-500/50 py-3 px-4 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
+                <i class="fa-solid fa-plug-circle-xmark"></i> Putus Koneksi Database
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     </main>
 
     <nav class="md:hidden fixed bottom-0 w-full bg-white border-t border-slate-200 flex justify-between shadow-[0_-10px_15px_-3px_rgba(0,0,0,0.05)] z-20 pb-safe">
-      <button onclick="switchTab('monitoring')" id="mnav-monitoring" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> Monitoring</button>
+      <button onclick="switchTab('monitoring')" id="mnav-monitoring" class="nav-item active"><i class="fa-solid fa-chart-pie"></i> <span class="block mt-1">Dashboard</span></button>
       <button onclick="switchTab('input')" id="mnav-input" class="nav-item relative">
-        <i class="fa-solid fa-pen-to-square"></i> Form Input
-        <span id="badgeInputMobile" class="absolute top-2 right-8 w-2.5 h-2.5 bg-red-500 rounded-full border border-white hidden animate-pulse"></span>
+        <i class="fa-solid fa-pen-to-square"></i> <span class="block mt-1">Input</span>
+        <span id="badgeInputMobile" class="absolute top-1 right-5 w-2 h-2 bg-rose-500 rounded-full hidden animate-pulse"></span>
       </button>
-      <button onclick="switchTab('petunjuk')" id="mnav-petunjuk" class="nav-item"><i class="fa-solid fa-circle-info"></i> Petunjuk</button>
+      <button onclick="switchTab('petunjuk')" id="mnav-petunjuk" class="nav-item"><i class="fa-solid fa-book"></i> <span class="block mt-1">SOP</span></button>
+      <button onclick="switchTab('admin')" id="mnav-admin" class="nav-item"><i class="fa-solid fa-user-shield"></i> <span class="block mt-1">Admin</span></button>
     </nav>
   </div>
 
   <div id="formModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex-col justify-end md:justify-center p-0 md:p-4 backdrop-blur-none md:backdrop-blur-sm">
-    <div class="bg-white w-full max-w-full md:max-w-3xl md:mx-auto rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col h-[90dvh] md:h-[85dvh] border-t-4 border-t-emerald-600 overflow-hidden">
+    <div class="bg-white w-full max-w-full md:max-w-3xl md:mx-auto rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col h-[90dvh] md:h-[85dvh] border-t-4 border-t-blue-600 overflow-hidden">
       
       <div class="p-4 md:p-5 border-b border-slate-100 flex justify-between items-start bg-slate-50 relative">
         <div class="pr-4">
-          <p class="text-[10px] md:text-xs text-emerald-600 font-bold uppercase tracking-widest mb-1" id="modalSubtitle"></p>
+          <p class="text-[10px] md:text-xs text-blue-600 font-bold uppercase tracking-widest mb-1" id="modalSubtitle"></p>
           <h2 class="text-lg md:text-xl font-black text-slate-800 leading-tight uppercase" id="modalTitle"></h2>
         </div>
         <div class="flex items-center gap-3">
-          <span id="autoSaveStatus" class="hidden text-[10px] font-bold text-emerald-600 uppercase tracking-widest animate-autosave bg-emerald-100 px-2 py-1 rounded shadow-sm">Merekam...</span>
+          <span id="autoSaveStatus" class="hidden text-[10px] font-bold text-blue-600 uppercase tracking-widest animate-autosave bg-blue-100 px-2 py-1 rounded shadow-sm"><i class="fa-solid fa-cloud-arrow-up mr-1"></i>Menyimpan...</span>
           <button onclick="closeForm()" class="w-8 h-8 bg-slate-200 hover:bg-slate-300 text-slate-600 rounded-full flex justify-center items-center font-bold transition cursor-pointer"><i class="fa-solid fa-xmark"></i></button>
         </div>
       </div>
       
-      <div class="p-4 md:p-6 overflow-y-auto flex-1 bg-white">
+      <div class="p-4 md:p-6 overflow-y-auto flex-1 bg-slate-50/50">
         <form id="dataForm" class="grid grid-cols-1 md:grid-cols-2 gap-4 md:gap-5"></form>
       </div>
 
       <div class="p-4 md:p-5 border-t border-slate-100 bg-white">
-        <button onclick="manualSubmit()" id="btnSave" class="w-full py-4 btn-primary text-sm md:text-base uppercase tracking-widest shadow-lg shadow-emerald-600/30">
-          <i class="fa-solid fa-cloud-arrow-up mr-2"></i> Tutup & Sinkronisasi Final
+        <button onclick="manualSubmit()" id="btnSave" class="w-full py-4 btn-primary text-sm md:text-base uppercase tracking-widest shadow-lg shadow-blue-600/30">
+          <i class="fa-solid fa-check-double mr-2"></i> Tutup & Sinkronisasi Final
         </button>
       </div>
     </div>
@@ -191,22 +213,22 @@
     let activeRowIndex = null;
 
     document.addEventListener("DOMContentLoaded", () => {
-      // Cek apakah User sudah memasukkan Link/ID sebelumnya
       const savedDB = localStorage.getItem('pkh_dynamic_db_2026');
       if (savedDB) {
         DB = JSON.parse(savedDB);
         document.getElementById('setupScreen').classList.add('hidden');
         document.getElementById('mainAppWrapper').classList.remove('hidden');
+        document.getElementById('adminSheetId').innerText = DB.sheetId;
+        document.getElementById('adminFolderId').innerText = DB.folderId;
         syncData();
         autoSaveTimer = setInterval(performBackgroundSync, 5000);
       } else {
-        // Tampilkan layar setup
         document.getElementById('setupScreen').classList.remove('hidden');
         document.getElementById('mainAppWrapper').classList.add('hidden');
       }
     });
 
-    // ===================== FUNGSI SETUP ENGINE (DINAMIS) =====================
+    // ===================== SETUP & ADMIN TOOLS =====================
     function extractId(input) {
       const match = input.match(/[-\w]{25,}/);
       return match ? match[0] : input;
@@ -215,30 +237,32 @@
     function saveSetup() {
       const sInput = document.getElementById('setupSheetInput').value.trim();
       const fInput = document.getElementById('setupFolderInput').value.trim();
-      
       if(!sInput || !fInput) { alert("Harap isi kedua kolom Link/ID!"); return; }
 
       DB.sheetId = extractId(sInput);
       DB.folderId = extractId(fInput);
       
       localStorage.setItem('pkh_dynamic_db_2026', JSON.stringify(DB));
-      
-      document.getElementById('setupScreen').classList.add('hidden');
-      document.getElementById('mainAppWrapper').classList.remove('hidden');
-      
-      syncData();
-      autoSaveTimer = setInterval(performBackgroundSync, 5000);
+      location.reload();
     }
 
     function resetSetup() {
-      if(confirm("Anda yakin ingin ganti database? Ini akan mereset tampilan sistem.")) {
+      if(confirm("Anda yakin ingin ganti database? Akses ke data sebelumnya akan terputus dari perangkat ini.")) {
         localStorage.removeItem('pkh_dynamic_db_2026');
         localStorage.removeItem('pkh_state_2026');
         location.reload();
       }
     }
-    
-    // ===================== MESIN CACHE (ANTI-REFRESH) =====================
+
+    function clearLocalCache() {
+      if(confirm("Bersihkan cache form yang belum tersimpan?")) {
+        for (let key in localStorage) {
+          if (key.startsWith('pkh_form_')) localStorage.removeItem(key);
+        }
+        alert("Cache HP berhasil dibersihkan!");
+      }
+    }
+
     function saveStateCache() {
       localStorage.setItem('pkh_state_2026', JSON.stringify({ tab: STATE.tab, view: STATE.view, kec: STATE.kec, desa: STATE.desa }));
     }
@@ -273,19 +297,19 @@
        markFormChanged(); 
     }
 
+    // ===================== KONEKSI API & KOMPRESI 80x130 =====================
     async function apiFetch(action, params = {}) {
       const url = new URL(API_URL);
       url.searchParams.append('action', action);
-      url.searchParams.append('sheetId', DB.sheetId); // Inject DB Dinamis
+      url.searchParams.append('sheetId', DB.sheetId); 
       Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
       const res = await fetch(url, { method: 'GET', redirect: 'follow' });
       return await res.json();
     }
 
     async function apiPost(action, dataPayload) {
-      dataPayload.sheetId = DB.sheetId; // Inject DB Dinamis
-      dataPayload.folderId = DB.folderId; // Inject DB Dinamis
-      
+      dataPayload.sheetId = DB.sheetId; 
+      dataPayload.folderId = DB.folderId; 
       const res = await fetch(API_URL, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
@@ -362,7 +386,7 @@
 
     function syncData() {
       document.getElementById('loader').classList.remove('hidden');
-      ['Monitoring', 'Input', 'Petunjuk'].forEach(t => document.getElementById('tab'+t).classList.add('hidden'));
+      ['Monitoring', 'Input', 'Petunjuk', 'Admin'].forEach(t => document.getElementById('tab'+t).classList.add('hidden'));
       document.getElementById('errorBox').classList.add('hidden');
       apiFetch('getConfig').then(res => {
         document.getElementById('loader').classList.add('hidden');
@@ -388,18 +412,23 @@
       if (STATE.tab === tabName && !isRestore && STATE.view === 'KEC') return;
       STATE.tab = tabName; 
       if (!isRestore) STATE.view = 'KEC'; 
-      ['monitoring', 'input', 'petunjuk'].forEach(t => {
+      
+      ['monitoring', 'input', 'petunjuk', 'admin'].forEach(t => {
         document.getElementById(`mnav-${t}`).classList.remove('active');
         document.getElementById(`dnav-${t}`).classList.remove('active');
         document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
       });
+      
       document.getElementById(`mnav-${STATE.tab}`).classList.add('active');
       document.getElementById(`dnav-${STATE.tab}`).classList.add('active');
       document.getElementById(`tab${STATE.tab.charAt(0).toUpperCase() + STATE.tab.slice(1)}`).classList.remove('hidden');
+      
       document.getElementById('btnBack').classList.add('hidden');
-      document.getElementById('appTitle').innerText = 'SISTEM DINAMIS';
-      document.getElementById('appSubtitle').innerText = 'Monitoring Data Wilayah';
-      document.getElementById('inputListTitle').innerHTML = '';
+      document.getElementById('appTitle').innerText = 'PKH APP CENTER';
+      document.getElementById('appSubtitle').innerText = 'SDM PKH TAPIN';
+      
+      if(document.getElementById('inputListTitle')) document.getElementById('inputListTitle').innerHTML = '';
+
       if (STATE.tab === 'monitoring') {
         if (isRestore && STATE.view === 'DESA') renderMonitoringDesa(STATE.kec);
         else renderMonitoringKec();
@@ -407,7 +436,10 @@
         if (isRestore && STATE.view === 'ROWS') loadInputRows(STATE.kec, STATE.desa);
         else if (isRestore && STATE.view === 'DESA') renderInputDesa(STATE.kec);
         else renderInputKec();
+      } else if (STATE.tab === 'admin') {
+        document.getElementById('appTitle').innerText = 'ADMIN PANEL';
       }
+      
       saveStateCache(); 
     }
 
@@ -420,27 +452,27 @@
       return `
         <div class="flex flex-wrap gap-2 mt-2">
           <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-slate-100 text-slate-600 px-2 py-1 rounded">ALL: ${d.total}</span>
-          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-red-50 text-red-600 px-2 py-1 rounded border border-red-100">KSG: ${d.kosong}</span>
-          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-emerald-50 text-emerald-700 px-2 py-1 rounded border border-emerald-100">OK: ${d.isi}</span>
+          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-rose-50 text-rose-600 px-2 py-1 rounded border border-rose-100">KSG: ${d.kosong}</span>
+          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">OK: ${d.isi}</span>
         </div>`;
     }
 
     function renderMonitoringKec() {
       STATE.view = 'KEC'; document.getElementById('btnBack').classList.add('hidden');
       document.getElementById('monitoringSummary').innerHTML = `
-        <div class="bg-slate-900 text-white rounded-xl p-6 shadow-lg relative overflow-hidden mb-6">
-          <div class="absolute right-0 top-0 w-40 h-40 bg-emerald-600 rounded-full blur-3xl opacity-20"></div>
-          <h2 class="text-[10px] md:text-xs text-emerald-400 font-bold tracking-widest uppercase mb-6">Statistik Total Keseluruhan</h2>
+        <div class="bg-blue-700 text-white rounded-xl p-6 shadow-lg relative overflow-hidden mb-6 border border-blue-600">
+          <div class="absolute right-0 top-0 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-30"></div>
+          <h2 class="text-[10px] md:text-xs text-blue-200 font-bold tracking-widest uppercase mb-6">Statistik Kabupaten Tapin</h2>
           <div class="flex justify-between items-end">
-            <div><p class="text-[10px] md:text-xs text-slate-400 font-semibold mb-1">TOTAL DATA</p><p class="font-black text-2xl md:text-3xl">${STATE.overall.total}</p></div>
-            <div class="text-right"><p class="text-[10px] md:text-xs text-red-400 font-semibold mb-1">KOSONG</p><p class="font-black text-xl md:text-2xl">${STATE.overall.kosong}</p></div>
-            <div class="text-right"><p class="text-[10px] md:text-xs text-emerald-400 font-semibold mb-1">SELESAI</p><p class="font-black text-xl md:text-2xl">${STATE.overall.isi}</p></div>
+            <div><p class="text-[10px] md:text-xs text-blue-300 font-semibold mb-1">TOTAL DATA</p><p class="font-black text-2xl md:text-3xl">${STATE.overall.total}</p></div>
+            <div class="text-right"><p class="text-[10px] md:text-xs text-rose-300 font-semibold mb-1">KOSONG</p><p class="font-black text-xl md:text-2xl">${STATE.overall.kosong}</p></div>
+            <div class="text-right"><p class="text-[10px] md:text-xs text-white font-semibold mb-1">SELESAI</p><p class="font-black text-xl md:text-2xl">${STATE.overall.isi}</p></div>
           </div>
         </div>`;
       const listDiv = document.getElementById('monitoringList');
       listDiv.innerHTML = '<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sebaran Wilayah</h3></div>';
       Object.keys(STATE.config).sort().forEach(kec => {
-        listDiv.innerHTML += `<div onclick="renderMonitoringDesa('${kec}')" class="card p-5 flex justify-between items-center cursor-pointer hover:border-emerald-500"><div><h3 class="font-black text-slate-800 text-sm">${kec}</h3>${renderStats(STATE.config[kec])}</div><i class="fa-solid fa-chevron-right text-slate-300"></i></div>`;
+        listDiv.innerHTML += `<div onclick="renderMonitoringDesa('${kec}')" class="card p-5 flex justify-between items-center cursor-pointer hover:border-blue-500"><div><h3 class="font-black text-slate-800 text-sm">${kec}</h3>${renderStats(STATE.config[kec])}</div><i class="fa-solid fa-chevron-right text-slate-300"></i></div>`;
       });
       saveStateCache();
     }
@@ -463,7 +495,7 @@
       document.getElementById('inputListTitle').innerHTML = '';
       const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
       Object.keys(STATE.config).sort().forEach(kec => {
-        listDiv.innerHTML += `<div onclick="renderInputDesa('${kec}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer hover:border-emerald-500 transition"><div><h3 class="font-black text-slate-800 text-sm md:text-base">${kec}</h3></div><div class="bg-emerald-50 w-8 h-8 rounded-full flex items-center justify-center text-emerald-600"><i class="fa-solid fa-arrow-right"></i></div></div>`;
+        listDiv.innerHTML += `<div onclick="renderInputDesa('${kec}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer hover:border-blue-500 transition"><div><h3 class="font-black text-slate-800 text-sm md:text-base">${kec}</h3></div><div class="bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center text-blue-600"><i class="fa-solid fa-arrow-right"></i></div></div>`;
       });
       saveStateCache();
     }
@@ -472,11 +504,11 @@
       STATE.view = 'DESA'; STATE.kec = kec;
       document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec;
       document.getElementById('appSubtitle').innerText = 'Pilih Sub-Wilayah';
-      document.getElementById('inputListTitle').innerHTML = `<h3 class="text-[11px] font-black text-emerald-700 uppercase tracking-widest pl-1 mb-1 mt-2">Pilih Wilayah ${kec}</h3>`;
+      document.getElementById('inputListTitle').innerHTML = `<h3 class="text-[11px] font-black text-blue-700 uppercase tracking-widest pl-1 mb-1 mt-2">Pilih Wilayah ${kec}</h3>`;
       const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
       Object.keys(STATE.config[kec].desas).sort().forEach(desa => {
         let kosong = STATE.config[kec].desas[desa].kosong;
-        listDiv.innerHTML += `<div onclick="loadInputRows('${kec}', '${desa}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer border-l-4 border-l-emerald-600 transition"><div><h3 class="font-bold text-slate-800 text-sm md:text-base">${desa}</h3><p class="text-[10px] md:text-xs text-red-500 font-bold mt-1">${kosong} Data Belum Lengkap</p></div><button class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded text-xs font-bold shadow-sm transition">BUKA</button></div>`;
+        listDiv.innerHTML += `<div onclick="loadInputRows('${kec}', '${desa}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer border-l-4 border-l-blue-600 transition"><div><h3 class="font-bold text-slate-800 text-sm md:text-base">${desa}</h3><p class="text-[10px] md:text-xs text-rose-500 font-bold mt-1">${kosong} Data Kosong</p></div><button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold shadow-sm transition">BUKA</button></div>`;
       });
       saveStateCache();
     }
@@ -487,17 +519,17 @@
       document.getElementById('appSubtitle').innerText = 'Daftar Data';
       document.getElementById('inputListTitle').innerHTML = '';
       const listDiv = document.getElementById('inputList');
-      listDiv.innerHTML = `<div class="col-span-full flex flex-col items-center py-12 text-emerald-600"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><p class="text-xs font-bold uppercase tracking-widest">Mencari Data Utama...</p></div>`;
+      listDiv.innerHTML = `<div class="col-span-full flex flex-col items-center py-12 text-blue-600"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><p class="text-xs font-bold uppercase tracking-widest">Memuat Tugas...</p></div>`;
       apiFetch('getRows', {kec, desa}).then(res => {
         if(res.status === 'error') throw new Error(res.message);
         listDiv.innerHTML = '';
         res.data.forEach(item => {
           const isDone = item.status === 'SELESAI';
-          listDiv.innerHTML += `<div class="card p-4 flex justify-between items-center bg-white ${isDone ? 'opacity-70 border-slate-200' : 'border-l-4 border-l-blue-600 shadow-md'}"><div class="overflow-hidden mr-3 flex-1"><div class="flex gap-2 mb-1"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest bg-slate-100 px-1.5 py-0.5 rounded">Baris ${item.rowIndex}</p><p class="text-[9px] text-emerald-700 font-bold uppercase tracking-widest bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-100">RT ${item.rt}</p></div><h3 class="font-bold text-slate-900 text-sm md:text-base truncate uppercase">${item.namaPengurus}</h3></div><button onclick='openForm(${JSON.stringify(item)})' class="${isDone ? 'bg-slate-200 text-slate-600' : 'btn-primary'} px-4 py-2 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest hover:scale-105 transition">EDIT FORM</button></div>`;
+          listDiv.innerHTML += `<div class="card p-4 flex justify-between items-center bg-white ${isDone ? 'opacity-70 border-slate-200' : 'border-l-4 border-l-blue-600 shadow-md'}"><div class="overflow-hidden mr-3 flex-1"><div class="flex gap-2 mb-1"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest bg-slate-100 px-1.5 py-0.5 rounded">Baris ${item.rowIndex}</p><p class="text-[9px] text-blue-700 font-bold uppercase tracking-widest bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">RT ${item.rt}</p></div><h3 class="font-bold text-slate-900 text-sm md:text-base truncate uppercase">${item.namaPengurus}</h3></div><button onclick='openForm(${JSON.stringify(item)})' class="${isDone ? 'bg-slate-200 text-slate-600' : 'btn-primary'} px-4 py-2 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest hover:scale-105 transition">FORM</button></div>`;
         });
         saveStateCache();
       }).catch(err => {
-        listDiv.innerHTML = `<div class="col-span-full text-center text-red-600 font-bold p-4 bg-red-50 rounded">Gagal mengambil data: ${err.message}</div>`;
+        listDiv.innerHTML = `<div class="col-span-full text-center text-rose-600 font-bold p-4 bg-rose-50 rounded">Gagal mengambil data: ${err.message}</div>`;
       });
     }
 
@@ -529,19 +561,19 @@
           if (isLocked) {
              fieldHtml = `<div class="w-full flex items-center justify-center gap-2 p-3 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-xs font-bold"><i class="fa-solid fa-lock text-slate-400"></i> MASTER TERKUNCI</div>`;
           } else {
-             fieldHtml = `<div id="photoWrap_${i}" class="photo-wrap w-full mt-1"><label class="flex flex-col items-center justify-center w-full p-3 border border-emerald-400 border-dashed rounded-lg bg-emerald-50 text-emerald-700 cursor-pointer hover:bg-emerald-100 transition active:scale-95"><div class="flex items-center gap-2"><i class="fa-solid fa-camera text-lg"></i><span class="text-xs md:text-sm font-bold">Pilih / Ganti Foto</span></div><input type="file" accept="image/*" id="inputCol_${i}" data-old='${val}' class="hidden" onchange="document.getElementById('lbl_file_${i}').innerText = this.files[0] ? this.files[0].name : ''; markFormChanged();"></label><div id="lbl_file_${i}" class="text-[10px] text-emerald-600 font-bold mt-1 text-center truncate"></div></div><label class="flex items-center gap-2 mt-2 cursor-pointer bg-slate-50 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition w-full"><input type="checkbox" id="skipPhoto_${i}" onchange="toggleSkipPhoto(${i})" ${isChecked} class="w-4 h-4 text-emerald-600 rounded border-slate-300 focus:ring-emerald-500"><span class="text-xs font-bold text-slate-700">Tandai: Tidak perlu foto</span></label>`;
+             fieldHtml = `<div id="photoWrap_${i}" class="photo-wrap w-full mt-1"><label class="flex flex-col items-center justify-center w-full p-3 border border-blue-400 border-dashed rounded-lg bg-blue-50 text-blue-700 cursor-pointer hover:bg-blue-100 transition active:scale-95"><div class="flex items-center gap-2"><i class="fa-solid fa-camera text-lg"></i><span class="text-xs md:text-sm font-bold">Pilih / Ganti Foto</span></div><input type="file" accept="image/*" id="inputCol_${i}" data-old='${val}' class="hidden" onchange="document.getElementById('lbl_file_${i}').innerText = this.files[0] ? this.files[0].name : ''; markFormChanged();"></label><div id="lbl_file_${i}" class="text-[10px] text-blue-600 font-bold mt-1 text-center truncate"></div></div><label class="flex items-center gap-2 mt-2 cursor-pointer bg-slate-50 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition w-full"><input type="checkbox" id="skipPhoto_${i}" onchange="toggleSkipPhoto(${i})" ${isChecked} class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"><span class="text-xs font-bold text-slate-700">Tandai: Tidak perlu foto</span></label>`;
           }
         } else if (isKesesuaian && !isLocked) {
           fieldHtml = `
-            <select id="inputCol_${i}" onchange="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:outline-none bg-white">
+            <select id="inputCol_${i}" onchange="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-white">
               <option value="" ${val === "" ? "selected" : ""}>-- Pilih Status --</option>
               <option value="SESUAI" ${val === "SESUAI" ? "selected" : ""}>SESUAI</option>
               <option value="TIDAK SESUAI" ${val === "TIDAK SESUAI" ? "selected" : ""}>TIDAK SESUAI</option>
             </select>`;
         } else if (isKesesuaian && isLocked) {
-          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" readonly class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:outline-none bg-slate-50 text-slate-500">`;
+          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" readonly class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-slate-50 text-slate-500">`;
         } else {
-          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" ${isLocked ? 'readonly' : 'oninput="markFormChanged()"'} class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-emerald-400 focus:ring-2 focus:ring-emerald-200 focus:outline-none" placeholder="Ketik data...">`;
+          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" ${isLocked ? 'readonly' : 'oninput="markFormChanged()"'} class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none" placeholder="Ketik data...">`;
         }
         
         form.innerHTML += `<div class="flex flex-col gap-1.5 p-3 bg-white border border-slate-200 rounded-xl shadow-sm"><label class="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between"><span>${h}</span>${isLocked ? '<span class="text-slate-400"><i class="fa-solid fa-lock mr-1"></i>MASTER</span>' : '<span class="text-blue-600"><i class="fa-solid fa-pen-to-square mr-1"></i>EDITABLE</span>'}</label>${fieldHtml}</div>`;
