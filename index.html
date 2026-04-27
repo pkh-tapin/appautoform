@@ -19,7 +19,6 @@
     .btn-primary { background-color: #2563eb; color: white; border-radius: 8px; font-weight: 700; transition: background 0.2s; letter-spacing: 0.5px; cursor: pointer; }
     .btn-primary:active, .btn-primary:hover { background-color: #1d4ed8; }
     
-    /* 4-Tab Navigation */
     .nav-item { flex: 1; text-align: center; padding: 12px 0; color: #94a3b8; font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; transition: color 0.2s; }
     .nav-item.active { color: #2563eb; border-top: 3px solid #2563eb; background: linear-gradient(to top, rgba(37, 99, 235, 0.05), transparent); }
     .desktop-nav-item { color: #94a3b8; font-size: 13px; font-weight: 700; text-transform: uppercase; padding: 8px 16px; border-radius: 8px; transition: all 0.2s; cursor: pointer;}
@@ -47,16 +46,16 @@
         <h1 class="text-2xl font-black text-slate-800 tracking-tight uppercase">Sistem Engine</h1>
         <p class="text-xs text-slate-500 font-semibold mt-1">Sambungkan ke Database Master</p>
       </div>
-      <div class="space-y-4">
+      <div class="space-y-4" id="setupFormArea">
         <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link/ID Google Sheet</label>
+          <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-widest mb-1">Link/ID Google Sheet</label>
           <input type="text" id="setupSheetInput" class="w-full p-3 rounded-lg text-sm font-medium border border-blue-400 focus:ring-2 focus:ring-blue-200" placeholder="https://docs.google.com/spreadsheets/d/....">
         </div>
-        <div>
-          <label class="block text-xs font-bold text-slate-500 uppercase tracking-widest mb-1">Link/ID Folder Drive</label>
-          <input type="text" id="setupFolderInput" class="w-full p-3 rounded-lg text-sm font-medium border border-blue-400 focus:ring-2 focus:ring-blue-200" placeholder="https://drive.google.com/drive/folders/....">
+        <div class="bg-blue-50 border border-blue-200 p-3 rounded-lg flex items-start gap-2">
+          <i class="fa-solid fa-folder-plus text-blue-500 mt-0.5"></i>
+          <p class="text-[10px] text-blue-800 font-bold leading-tight">Sistem akan otomatis merakit Form dan membuat Folder Penyimpanan Foto di Drive Anda.</p>
         </div>
-        <button onclick="saveSetup()" class="w-full py-4 btn-primary text-sm uppercase tracking-widest mt-4 shadow-lg shadow-blue-500/30">
+        <button onclick="saveSetup()" id="btnSetup" class="w-full py-4 btn-primary text-sm uppercase tracking-widest mt-4 shadow-lg shadow-blue-500/30">
           <i class="fa-solid fa-plug mr-2"></i> KONEKSIKAN SISTEM
         </button>
       </div>
@@ -111,7 +110,7 @@
           <i class="fa-solid fa-bolt text-blue-400 text-xl mt-1"></i>
           <div>
             <h3 class="font-bold text-white text-sm">Mode Operasi Lapangan</h3>
-            <p class="text-xs text-slate-300 mt-1 leading-relaxed">Form dibangun otomatis. Kolom Master A-N terkunci. Didukung <b>Auto-Save 5 Detik</b>.</p>
+            <p class="text-xs text-slate-300 mt-1 leading-relaxed">Form Builder Aktif. Aturan kunci dan dropdown dikendalikan Admin. Didukung <b>Auto-Save Realtime</b>.</p>
           </div>
         </div>
         <div id="inputListTitle" class="w-full"></div>
@@ -123,38 +122,65 @@
           <h2 class="font-black text-xl text-slate-800 mb-6 uppercase tracking-tight"><i class="fa-solid fa-book text-blue-600 mr-2"></i>Panduan SOP 2026</h2>
           <ul class="space-y-4 text-sm text-slate-600 font-medium mb-8">
             <li class="flex gap-3 items-start"><i class="fa-solid fa-1 text-blue-600 mt-1"></i> Buka tab <strong>Form Input</strong>.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-2 text-blue-600 mt-1"></i> Pilih Wilayah tujuan.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-circle-exclamation text-rose-500 mt-1"></i> <b>PENTING:</b> Jika data kosong, harap isi dengan tanda strip (<b>-</b>).</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-hashtag text-blue-500 mt-1"></i> <b>PENTING:</b> Kolom <b>Jumlah</b>, wajib diisi dengan <b>Angka</b>.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-lock text-slate-400 mt-1"></i> Kolom berlabel <b>MASTER</b> (Kolom A-N) terkunci permanen.</li>
-            <li class="flex gap-3 items-start"><i class="fa-solid fa-pen text-blue-600 mt-1"></i> Kolom berlabel <b>EDITABLE</b> (Kolom O+) bebas revisi.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-circle-exclamation text-rose-500 mt-1"></i> <b>KOSONG = STRIP (-):</b> Jika tidak ada data yang perlu diisi, harap wajib masukkan tanda strip agar dianggap selesai.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-hashtag text-blue-500 mt-1"></i> <b>KOLOM JUMLAH:</b> Wajib diisi dengan <b>Angka</b> (Contoh: 1000).</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-lock text-slate-400 mt-1"></i> Kolom <b>MASTER</b> telah dikunci mati oleh Admin dan tidak dapat dimanipulasi.</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-pen text-blue-600 mt-1"></i> Kolom <b>EDITABLE</b> dapat Anda revisi berulang kali (termasuk foto).</li>
+            <li class="flex gap-3 items-start"><i class="fa-solid fa-check-double text-blue-600 mt-1"></i> Centang <b>"Tidak perlu foto"</b> jika tidak ada dokumen fisik.</li>
           </ul>
+          <div class="p-5 bg-blue-50 border border-blue-200 rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+            <div class="text-center md:text-left">
+              <h3 class="font-bold text-blue-900 text-base">Video / Dokumen Petunjuk</h3>
+              <p class="text-xs md:text-sm text-blue-700 mt-1">Pelajari SOP selengkapnya di sini.</p>
+            </div>
+            <a href="https://drive.google.com/file/d/1Rax-LyrpyQTcFzO73qNmJUJxZy0GuFgH/view?usp=drive_link" target="_blank" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest shadow-md transition whitespace-nowrap">
+              <i class="fa-solid fa-arrow-up-right-from-square mr-2"></i> Buka Panduan
+            </a>
+          </div>
         </div>
       </div>
 
       <div id="tabAdmin" class="hidden space-y-5 max-w-3xl mx-auto">
-        <div class="bg-slate-900 p-6 rounded-xl shadow-lg border border-slate-700 text-white">
-          <h2 class="font-black text-lg mb-2"><i class="fa-solid fa-user-shield text-blue-400 mr-2"></i>Admin Control Panel</h2>
-          <p class="text-xs text-slate-400 mb-6">Pusat kendali mesin dinamis dan manajemen cache aplikasi.</p>
-          
-          <div class="space-y-4">
-            <div class="bg-slate-800 p-4 rounded-lg border border-slate-600">
-              <h3 class="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-2">Koneksi Database Saat Ini</h3>
-              <p class="text-xs text-slate-300 break-all"><i class="fa-solid fa-file-excel mr-2 text-emerald-500"></i><span id="adminSheetId"></span></p>
-              <p class="text-xs text-slate-300 break-all mt-2"><i class="fa-solid fa-folder-open mr-2 text-blue-400"></i><span id="adminFolderId"></span></p>
-            </div>
+        <div id="adminLoginArea" class="bg-white p-6 rounded-xl shadow-md border-t-4 border-t-slate-800">
+          <div class="text-center mb-4">
+            <i class="fa-solid fa-lock text-slate-800 text-3xl mb-2"></i>
+            <h2 class="font-black text-lg text-slate-800">Otorisasi Admin</h2>
+          </div>
+          <input type="password" id="adminPassword" class="w-full p-3 rounded-lg text-sm font-medium border border-slate-300 focus:ring-2 focus:ring-blue-400 mb-4 text-center tracking-widest" placeholder="Masukkan Password">
+          <button onclick="loginAdmin()" class="w-full bg-slate-800 hover:bg-slate-900 text-white py-3 rounded-lg text-sm font-bold transition">LOGIN</button>
+        </div>
 
-            <div class="bg-blue-900/50 p-4 rounded-lg border border-blue-500/50">
-              <h3 class="text-xs font-bold text-blue-300 mb-1"><i class="fa-solid fa-wand-magic-sparkles mr-2"></i>Dynamic Form Builder</h3>
-              <p class="text-[11px] text-slate-300 leading-relaxed">Aplikasi ini menganut sistem <i>Headless Database</i>. Untuk <b>menambah form, mengubah kolom, atau menambah pilihan</b>, Anda hanya perlu menambahkannya langsung di dalam <b>Google Sheet</b>. Aplikasi akan mendeteksinya secara otomatis dan merakit UI-nya secara realtime.</p>
+        <div id="adminContentArea" class="hidden bg-slate-900 p-4 md:p-6 rounded-xl shadow-lg border border-slate-700 text-white">
+          <div class="flex justify-between items-start mb-6">
+            <div>
+              <h2 class="font-black text-lg"><i class="fa-solid fa-user-shield text-blue-400 mr-2"></i>Control Panel</h2>
+              <p class="text-[10px] text-slate-400 mt-1">Manajemen Aturan Form & Koneksi</p>
+            </div>
+            <button onclick="logoutAdmin()" class="text-rose-400 text-xs font-bold bg-rose-900/30 px-3 py-1 rounded hover:bg-rose-900/60"><i class="fa-solid fa-right-from-bracket mr-1"></i>Logout</button>
+          </div>
+          
+          <div class="space-y-5">
+            <div class="bg-slate-800 p-4 rounded-xl border border-slate-600">
+              <div class="flex justify-between items-center mb-3 border-b border-slate-700 pb-2">
+                <h3 class="text-xs font-bold text-emerald-400 uppercase tracking-widest"><i class="fa-solid fa-sliders mr-2"></i>Manajemen Kolom (Form Builder)</h3>
+                <button onclick="saveAdminRules()" id="btnSaveRules" class="bg-emerald-600 hover:bg-emerald-700 text-white text-[10px] px-3 py-1.5 rounded font-bold shadow-sm">SIMPAN ATURAN</button>
+              </div>
+              <p class="text-[10px] text-slate-400 mb-3 leading-relaxed">Atur kolom mana yang terkunci (Master) atau bebas diedit (Editable). Tambahkan opsi koma (,) untuk Dropdown. <br><span class="text-blue-300">Untuk tambah kolom baru, tambah di Excel lalu klik tombol Refresh Data di atas.</span></p>
+              
+              <div id="adminRulesContainer" class="space-y-2 max-h-96 overflow-y-auto pr-2">
+                </div>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-4">
+              <div class="bg-slate-800 p-4 rounded-lg border border-slate-600 col-span-full">
+                <p class="text-[10px] text-emerald-400 break-all mb-1 font-mono"><i class="fa-solid fa-file-excel mr-2 w-4"></i>Sheet: <span id="adminSheetId"></span></p>
+                <p class="text-[10px] text-blue-400 break-all font-mono"><i class="fa-solid fa-folder-open mr-2 w-4"></i>Folder: <span id="adminFolderId"></span></p>
+              </div>
               <button onclick="clearLocalCache()" class="bg-slate-700 hover:bg-slate-600 text-white py-3 px-4 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
                 <i class="fa-solid fa-broom"></i> Bersihkan Cache HP
               </button>
               <button onclick="resetSetup()" class="bg-rose-600/20 hover:bg-rose-600/40 text-rose-400 border border-rose-500/50 py-3 px-4 rounded-lg text-xs font-bold transition flex items-center justify-center gap-2">
-                <i class="fa-solid fa-plug-circle-xmark"></i> Putus Koneksi Database
+                <i class="fa-solid fa-power-off"></i> Ganti Database URL
               </button>
             </div>
           </div>
@@ -175,7 +201,6 @@
 
   <div id="formModal" class="fixed inset-0 bg-slate-900/90 z-50 hidden flex-col justify-end md:justify-center p-0 md:p-4 backdrop-blur-none md:backdrop-blur-sm">
     <div class="bg-white w-full max-w-full md:max-w-3xl md:mx-auto rounded-t-3xl md:rounded-2xl shadow-2xl flex flex-col h-[90dvh] md:h-[85dvh] border-t-4 border-t-blue-600 overflow-hidden">
-      
       <div class="p-4 md:p-5 border-b border-slate-100 flex justify-between items-start bg-slate-50 relative">
         <div class="pr-4">
           <p class="text-[10px] md:text-xs text-blue-600 font-bold uppercase tracking-widest mb-1" id="modalSubtitle"></p>
@@ -203,10 +228,12 @@
     // =========================================================================
     // ⚠️ GANTI URL INI DENGAN URL DEPLOYMENT APPS SCRIPT ANDA
     // =========================================================================
-    const API_URL = 'https://script.google.com/macros/s/AKfycbyBr-XMqcVUKkfdQCYz7HCvVwgcechSXXNYocsHTNJ1U5UZoHnmAmpQNR2vcABGcM-F7g/exec';
+    const API_URL = 'https://script.google.com/macros/s/AKfycbyQMRzeKbux-KZtgHRoBQjnjQ6LkKawZjYiTi3I-gL8psFG9jbNQV5tQVH_1XOjsOVqlA/exec';
+    
+    const MASTER_LOG_URL = 'https://script.google.com/macros/s/AKfycbyBr-XMqcVUKkfdQCYz7HCvVwgcechSXXNYocsHTNJ1U5UZoHnmAmpQNR2vcABGcM-F7g/exec';
 
     let DB = { sheetId: '', folderId: '' };
-    let STATE = { tab: 'monitoring', view: 'KEC', kec: '', desa: '', config: null, overall: null, headers: [] };
+    let STATE = { tab: 'monitoring', view: 'KEC', kec: '', desa: '', config: null, overall: null, headers: [], rules: [] };
     
     let autoSaveTimer = null;
     let pendingChanges = false;
@@ -229,25 +256,43 @@
     });
 
     // ===================== SETUP & ADMIN TOOLS =====================
-    function extractId(input) {
-      const match = input.match(/[-\w]{25,}/);
-      return match ? match[0] : input;
-    }
+    function extractId(input) { const match = input.match(/[-\w]{25,}/); return match ? match[0] : input; }
 
-    function saveSetup() {
+    async function saveSetup() {
       const sInput = document.getElementById('setupSheetInput').value.trim();
-      const fInput = document.getElementById('setupFolderInput').value.trim();
-      if(!sInput || !fInput) { alert("Harap isi kedua kolom Link/ID!"); return; }
+      if(!sInput) { alert("Harap isi Link Google Sheet Anda!"); return; }
 
-      DB.sheetId = extractId(sInput);
-      DB.folderId = extractId(fInput);
-      
-      localStorage.setItem('pkh_dynamic_db_2026', JSON.stringify(DB));
-      location.reload();
+      const btn = document.getElementById('btnSetup');
+      btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> MENGANALISA & MEMBANGUN SISTEM...';
+      btn.disabled = true;
+
+      try {
+        const sheetId = extractId(sInput);
+        const res = await fetch(API_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action: 'initSetup', sheetId: sheetId }),
+          redirect: 'follow'
+        }).then(r => r.json());
+
+        if (res.status === 'error') throw new Error(res.message);
+
+        DB.sheetId = sheetId;
+        DB.folderId = res.folderId;
+        localStorage.setItem('pkh_dynamic_db_2026', JSON.stringify(DB));
+
+        try { fetch(MASTER_LOG_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify({ action: 'log', link: 'https://docs.google.com/spreadsheets/d/' + sheetId, nama: res.sheetName }), redirect: 'follow' }); } catch (e) {}
+
+        location.reload();
+      } catch (err) {
+        alert("GAGAL: " + err.message);
+        btn.innerHTML = '<i class="fa-solid fa-plug mr-2"></i> KONEKSIKAN & BUAT FOLDER';
+        btn.disabled = false;
+      }
     }
 
     function resetSetup() {
-      if(confirm("Anda yakin ingin ganti database? Akses ke data sebelumnya akan terputus dari perangkat ini.")) {
+      if(confirm("Anda yakin ingin ganti database?")) {
         localStorage.removeItem('pkh_dynamic_db_2026');
         localStorage.removeItem('pkh_state_2026');
         location.reload();
@@ -255,96 +300,126 @@
     }
 
     function clearLocalCache() {
-      if(confirm("Bersihkan cache form yang belum tersimpan?")) {
-        for (let key in localStorage) {
-          if (key.startsWith('pkh_form_')) localStorage.removeItem(key);
-        }
+      if(confirm("Bersihkan cache form yang belum tersimpan di HP ini?")) {
+        for (let key in localStorage) { if (key.startsWith('pkh_form_')) localStorage.removeItem(key); }
         alert("Cache HP berhasil dibersihkan!");
       }
     }
 
-    function saveStateCache() {
-      localStorage.setItem('pkh_state_2026', JSON.stringify({ tab: STATE.tab, view: STATE.view, kec: STATE.kec, desa: STATE.desa }));
+    function loginAdmin() {
+      if(document.getElementById('adminPassword').value === 'admin123') {
+        sessionStorage.setItem('isAdmin', 'true');
+        document.getElementById('adminLoginArea').classList.add('hidden');
+        document.getElementById('adminContentArea').classList.remove('hidden');
+      } else { alert("Password Salah!"); }
     }
 
+    function logoutAdmin() {
+      sessionStorage.removeItem('isAdmin');
+      document.getElementById('adminPassword').value = '';
+      document.getElementById('adminContentArea').classList.add('hidden');
+      document.getElementById('adminLoginArea').classList.remove('hidden');
+    }
+
+    function renderAdminRules() {
+      const container = document.getElementById('adminRulesContainer');
+      container.innerHTML = '';
+      STATE.rules.forEach((rule, idx) => {
+        container.innerHTML += `
+          <div class="bg-slate-700 p-3 rounded-lg flex flex-col md:flex-row md:items-center gap-3 border border-slate-600">
+            <div class="text-white font-bold text-[11px] md:w-1/3 truncate" title="${rule.header}">${rule.header}</div>
+            <div class="flex-1 flex gap-2">
+              <select id="ruleLock_${idx}" class="p-1.5 rounded text-[10px] font-bold bg-slate-600 text-white w-1/2 border border-slate-500 outline-none">
+                <option value="true" ${rule.isLocked ? 'selected' : ''}>KUNCI MASTER</option>
+                <option value="false" ${!rule.isLocked ? 'selected' : ''}>EDITABLE</option>
+              </select>
+              <select id="ruleType_${idx}" onchange="toggleRuleOptions(${idx})" class="p-1.5 rounded text-[10px] font-bold bg-slate-600 text-white w-1/2 border border-slate-500 outline-none">
+                <option value="text" ${rule.type === 'text' ? 'selected' : ''}>Teks Biasa</option>
+                <option value="number" ${rule.type === 'number' ? 'selected' : ''}>Angka</option>
+                <option value="dropdown" ${rule.type === 'dropdown' ? 'selected' : ''}>Dropdown</option>
+                <option value="photo" ${rule.type === 'photo' ? 'selected' : ''}>Foto/Gambar</option>
+              </select>
+            </div>
+            <input type="text" id="ruleOpt_${idx}" value="${rule.options}" placeholder="Pilihan 1, Pilihan 2..." class="w-full md:w-1/3 p-1.5 rounded text-[10px] bg-slate-800 text-white border border-slate-600 ${rule.type === 'dropdown' ? 'block' : 'hidden'}">
+          </div>`;
+      });
+    }
+
+    function toggleRuleOptions(idx) {
+      const type = document.getElementById(`ruleType_${idx}`).value;
+      const opt = document.getElementById(`ruleOpt_${idx}`);
+      if(type === 'dropdown') opt.classList.remove('hidden'); else opt.classList.add('hidden');
+    }
+
+    async function saveAdminRules() {
+      const btn = document.getElementById('btnSaveRules');
+      btn.innerHTML = 'MENYIMPAN...'; btn.disabled = true;
+      
+      let newRules = STATE.rules.map((r, i) => ({
+        header: r.header,
+        isLocked: document.getElementById(`ruleLock_${i}`).value === 'true',
+        type: document.getElementById(`ruleType_${i}`).value,
+        options: document.getElementById(`ruleOpt_${i}`).value
+      }));
+
+      try {
+        const res = await apiPost('saveConfigRules', newRules);
+        if(res.status === 'error') throw new Error(res.message);
+        STATE.rules = newRules;
+        alert("✅ Aturan berhasil disimpan di Server!");
+      } catch(e) { alert("❌ Gagal menyimpan aturan: " + e.message); }
+      finally { btn.innerHTML = 'SIMPAN ATURAN'; btn.disabled = false; }
+    }
+
+    // ===================== KONEKSI API & CACHE =====================
+    function saveStateCache() { localStorage.setItem('pkh_state_2026', JSON.stringify({ tab: STATE.tab, view: STATE.view, kec: STATE.kec, desa: STATE.desa })); }
     function saveFormCache() {
       if(!activeRowIndex) return;
       let formData = {};
       for(let i=0; i<STATE.headers.length; i++) {
-        let skipCb = document.getElementById(`skipPhoto_${i}`);
-        let el = document.getElementById(`inputCol_${i}`);
+        let skipCb = document.getElementById(`skipPhoto_${i}`); let el = document.getElementById(`inputCol_${i}`);
         if (skipCb) formData[`skip_${i}`] = skipCb.checked;
         if (el && el.type !== 'file') formData[i] = el.value;
       }
       localStorage.setItem(`pkh_form_${activeRowIndex}`, JSON.stringify(formData));
       pendingChanges = true; 
     }
-
     function markFormChanged() { saveFormCache(); }
-
     function toggleSkipPhoto(index) {
        const isSkipped = document.getElementById(`skipPhoto_${index}`).checked;
        const container = document.getElementById(`photoWrap_${index}`);
        if(isSkipped) {
-          container.style.opacity = '0.3';
-          container.style.pointerEvents = 'none';
-          document.getElementById(`inputCol_${index}`).value = '-'; 
-          document.getElementById(`lbl_file_${index}`).innerText = '';
-       } else {
-          container.style.opacity = '1';
-          container.style.pointerEvents = 'auto';
-       }
+          container.style.opacity = '0.3'; container.style.pointerEvents = 'none';
+          document.getElementById(`inputCol_${index}`).value = '-'; document.getElementById(`lbl_file_${index}`).innerText = '';
+       } else { container.style.opacity = '1'; container.style.pointerEvents = 'auto'; }
        markFormChanged(); 
     }
 
-    // ===================== KONEKSI API & KOMPRESI 80x130 =====================
     async function apiFetch(action, params = {}) {
-      const url = new URL(API_URL);
-      url.searchParams.append('action', action);
-      url.searchParams.append('sheetId', DB.sheetId); 
+      const url = new URL(API_URL); url.searchParams.append('action', action); url.searchParams.append('sheetId', DB.sheetId); 
       Object.keys(params).forEach(k => url.searchParams.append(k, params[k]));
-      const res = await fetch(url, { method: 'GET', redirect: 'follow' });
-      return await res.json();
+      const res = await fetch(url, { method: 'GET', redirect: 'follow' }); return await res.json();
     }
-
     async function apiPost(action, dataPayload) {
-      dataPayload.sheetId = DB.sheetId; 
-      dataPayload.folderId = DB.folderId; 
-      const res = await fetch(API_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: action, data: dataPayload }),
-        redirect: 'follow'
-      });
+      let payload = { action: action, sheetId: DB.sheetId, folderId: DB.folderId };
+      if(action === 'saveConfigRules') { payload.rules = dataPayload; } else { payload.data = dataPayload; }
+      const res = await fetch(API_URL, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=utf-8' }, body: JSON.stringify(payload), redirect: 'follow' });
       return await res.json();
     }
 
     function compressImage(file) {
       return new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
+        const reader = new FileReader(); reader.readAsDataURL(file);
         reader.onload = event => {
-          const img = new Image();
-          img.src = event.target.result;
+          const img = new Image(); img.src = event.target.result;
           img.onload = () => {
             const canvas = document.createElement('canvas');
-            const TARGET_WIDTH = 80; 
-            const TARGET_HEIGHT = 130;
-            canvas.width = TARGET_WIDTH;
-            canvas.height = TARGET_HEIGHT;
-            const ctx = canvas.getContext('2d');
-            const imgRatio = img.width / img.height;
-            const targetRatio = TARGET_WIDTH / TARGET_HEIGHT;
+            const TARGET_WIDTH = 80; const TARGET_HEIGHT = 130;
+            canvas.width = TARGET_WIDTH; canvas.height = TARGET_HEIGHT; const ctx = canvas.getContext('2d');
+            const imgRatio = img.width / img.height; const targetRatio = TARGET_WIDTH / TARGET_HEIGHT;
             let drawWidth, drawHeight, offsetX = 0, offsetY = 0;
-            if (imgRatio > targetRatio) {
-              drawHeight = TARGET_HEIGHT;
-              drawWidth = img.width * (TARGET_HEIGHT / img.height);
-              offsetX = (TARGET_WIDTH - drawWidth) / 2;
-            } else {
-              drawWidth = TARGET_WIDTH;
-              drawHeight = img.height * (TARGET_WIDTH / img.width);
-              offsetY = (TARGET_HEIGHT - drawHeight) / 2;
-            }
+            if (imgRatio > targetRatio) { drawHeight = TARGET_HEIGHT; drawWidth = img.width * (TARGET_HEIGHT / img.height); offsetX = (TARGET_WIDTH - drawWidth) / 2; } 
+            else { drawWidth = TARGET_WIDTH; drawHeight = img.height * (TARGET_WIDTH / img.width); offsetY = (TARGET_HEIGHT - drawHeight) / 2; }
             ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
             resolve(canvas.toDataURL('image/jpeg', 0.9)); 
           };
@@ -357,30 +432,18 @@
     async function performBackgroundSync() {
       const modal = document.getElementById('formModal');
       if (!modal.classList.contains('hidden') && pendingChanges && activeRowIndex) {
-        const statusUI = document.getElementById('autoSaveStatus');
-        statusUI.classList.remove('hidden'); 
+        const statusUI = document.getElementById('autoSaveStatus'); statusUI.classList.remove('hidden'); 
         try {
           const updates = new Array(STATE.headers.length).fill("");
           for(let i=0; i<STATE.headers.length; i++) {
-            const skipCb = document.getElementById(`skipPhoto_${i}`);
-            const input = document.getElementById(`inputCol_${i}`);
-            if (skipCb && skipCb.checked) {
-              updates[i] = "-"; 
-            } else if (input) {
-              if (input.type === 'file') {
-                updates[i] = input.getAttribute('data-old') || "";
-              } else {
-                updates[i] = input.value;
-              }
-            }
+            const skipCb = document.getElementById(`skipPhoto_${i}`); const input = document.getElementById(`inputCol_${i}`);
+            if (skipCb && skipCb.checked) { updates[i] = "-"; } 
+            else if (input) { if (input.type === 'file') { updates[i] = input.getAttribute('data-old') || ""; } else { updates[i] = input.value; } }
           }
-          await apiPost('submitData', { rowIndex: activeRowIndex, updates });
+          await apiPost('submitData', { rowIndex: activeRowIndex, updates: updates, rules: STATE.rules });
           pendingChanges = false; 
-        } catch (e) {
-          console.error("Auto-Save error:", e);
-        } finally {
-          setTimeout(() => statusUI.classList.add('hidden'), 1000);
-        }
+        } catch (e) { console.error("Auto-Save error:", e); } 
+        finally { setTimeout(() => statusUI.classList.add('hidden'), 1000); }
       }
     }
 
@@ -391,15 +454,13 @@
       apiFetch('getConfig').then(res => {
         document.getElementById('loader').classList.add('hidden');
         if(res.status === 'error') throw new Error(res.message);
-        STATE.config = res.stats; STATE.overall = res.overall; STATE.headers = res.headers;
+        STATE.config = res.stats; STATE.overall = res.overall; STATE.headers = res.headers; STATE.rules = res.rules;
+        renderAdminRules();
+        
         const hasEmpty = res.overall.kosong > 0;
-        document.getElementById('badgeInputDesktop').style.display = hasEmpty ? 'block' : 'none';
-        document.getElementById('badgeInputMobile').style.display = hasEmpty ? 'block' : 'none';
+        document.getElementById('badgeInputDesktop').style.display = hasEmpty ? 'block' : 'none'; document.getElementById('badgeInputMobile').style.display = hasEmpty ? 'block' : 'none';
         const savedCache = localStorage.getItem('pkh_state_2026');
-        if (savedCache) {
-          const s = JSON.parse(savedCache);
-          STATE.tab = s.tab; STATE.view = s.view; STATE.kec = s.kec; STATE.desa = s.desa;
-        }
+        if (savedCache) { const s = JSON.parse(savedCache); STATE.tab = s.tab; STATE.view = s.view; STATE.kec = s.kec; STATE.desa = s.desa; }
         switchTab(STATE.tab, true); 
       }).catch(err => {
         document.getElementById('loader').classList.add('hidden');
@@ -410,36 +471,18 @@
 
     function switchTab(tabName, isRestore = false) {
       if (STATE.tab === tabName && !isRestore && STATE.view === 'KEC') return;
-      STATE.tab = tabName; 
-      if (!isRestore) STATE.view = 'KEC'; 
+      STATE.tab = tabName; if (!isRestore) STATE.view = 'KEC'; 
       
       ['monitoring', 'input', 'petunjuk', 'admin'].forEach(t => {
-        document.getElementById(`mnav-${t}`).classList.remove('active');
-        document.getElementById(`dnav-${t}`).classList.remove('active');
-        document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
+        document.getElementById(`mnav-${t}`).classList.remove('active'); document.getElementById(`dnav-${t}`).classList.remove('active'); document.getElementById(`tab${t.charAt(0).toUpperCase() + t.slice(1)}`).classList.add('hidden');
       });
-      
-      document.getElementById(`mnav-${STATE.tab}`).classList.add('active');
-      document.getElementById(`dnav-${STATE.tab}`).classList.add('active');
-      document.getElementById(`tab${STATE.tab.charAt(0).toUpperCase() + STATE.tab.slice(1)}`).classList.remove('hidden');
-      
-      document.getElementById('btnBack').classList.add('hidden');
-      document.getElementById('appTitle').innerText = 'PKH APP CENTER';
-      document.getElementById('appSubtitle').innerText = 'SDM PKH TAPIN';
-      
+      document.getElementById(`mnav-${STATE.tab}`).classList.add('active'); document.getElementById(`dnav-${STATE.tab}`).classList.add('active'); document.getElementById(`tab${STATE.tab.charAt(0).toUpperCase() + STATE.tab.slice(1)}`).classList.remove('hidden');
+      document.getElementById('btnBack').classList.add('hidden'); document.getElementById('appTitle').innerText = 'PKH APP CENTER'; document.getElementById('appSubtitle').innerText = 'SDM PKH TAPIN';
       if(document.getElementById('inputListTitle')) document.getElementById('inputListTitle').innerHTML = '';
 
-      if (STATE.tab === 'monitoring') {
-        if (isRestore && STATE.view === 'DESA') renderMonitoringDesa(STATE.kec);
-        else renderMonitoringKec();
-      } else if (STATE.tab === 'input') {
-        if (isRestore && STATE.view === 'ROWS') loadInputRows(STATE.kec, STATE.desa);
-        else if (isRestore && STATE.view === 'DESA') renderInputDesa(STATE.kec);
-        else renderInputKec();
-      } else if (STATE.tab === 'admin') {
-        document.getElementById('appTitle').innerText = 'ADMIN PANEL';
-      }
-      
+      if (STATE.tab === 'monitoring') { if (isRestore && STATE.view === 'DESA') renderMonitoringDesa(STATE.kec); else renderMonitoringKec();
+      } else if (STATE.tab === 'input') { if (isRestore && STATE.view === 'ROWS') loadInputRows(STATE.kec, STATE.desa); else if (isRestore && STATE.view === 'DESA') renderInputDesa(STATE.kec); else renderInputKec();
+      } else if (STATE.tab === 'admin') { document.getElementById('appTitle').innerText = 'ADMIN PANEL'; document.getElementById('appSubtitle').innerText = 'Sistem Keamanan'; if(sessionStorage.getItem('isAdmin') === 'true') { document.getElementById('adminLoginArea').classList.add('hidden'); document.getElementById('adminContentArea').classList.remove('hidden'); } }
       saveStateCache(); 
     }
 
@@ -449,134 +492,91 @@
     }
 
     function renderStats(d) {
-      return `
-        <div class="flex flex-wrap gap-2 mt-2">
-          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-slate-100 text-slate-600 px-2 py-1 rounded">ALL: ${d.total}</span>
-          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-rose-50 text-rose-600 px-2 py-1 rounded border border-rose-100">KSG: ${d.kosong}</span>
-          <span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-100">OK: ${d.isi}</span>
-        </div>`;
+      return `<div class="flex flex-wrap gap-2 mt-2"><span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-slate-100 text-slate-600 px-2 py-1 rounded border border-slate-200">TOTAL: ${d.total}</span><span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-rose-50 text-rose-600 px-2 py-1 rounded border border-rose-200">KOSONG: ${d.kosong}</span><span class="text-[9px] md:text-[10px] font-black tracking-widest uppercase bg-blue-50 text-blue-700 px-2 py-1 rounded border border-blue-200">OK: ${d.isi}</span></div>`;
     }
 
     function renderMonitoringKec() {
       STATE.view = 'KEC'; document.getElementById('btnBack').classList.add('hidden');
-      document.getElementById('monitoringSummary').innerHTML = `
-        <div class="bg-blue-700 text-white rounded-xl p-6 shadow-lg relative overflow-hidden mb-6 border border-blue-600">
-          <div class="absolute right-0 top-0 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-30"></div>
-          <h2 class="text-[10px] md:text-xs text-blue-200 font-bold tracking-widest uppercase mb-6">Statistik Kabupaten Tapin</h2>
-          <div class="flex justify-between items-end">
-            <div><p class="text-[10px] md:text-xs text-blue-300 font-semibold mb-1">TOTAL DATA</p><p class="font-black text-2xl md:text-3xl">${STATE.overall.total}</p></div>
-            <div class="text-right"><p class="text-[10px] md:text-xs text-rose-300 font-semibold mb-1">KOSONG</p><p class="font-black text-xl md:text-2xl">${STATE.overall.kosong}</p></div>
-            <div class="text-right"><p class="text-[10px] md:text-xs text-white font-semibold mb-1">SELESAI</p><p class="font-black text-xl md:text-2xl">${STATE.overall.isi}</p></div>
-          </div>
-        </div>`;
-      const listDiv = document.getElementById('monitoringList');
-      listDiv.innerHTML = '<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sebaran Wilayah</h3></div>';
-      Object.keys(STATE.config).sort().forEach(kec => {
-        listDiv.innerHTML += `<div onclick="renderMonitoringDesa('${kec}')" class="card p-5 flex justify-between items-center cursor-pointer hover:border-blue-500"><div><h3 class="font-black text-slate-800 text-sm">${kec}</h3>${renderStats(STATE.config[kec])}</div><i class="fa-solid fa-chevron-right text-slate-300"></i></div>`;
-      });
+      document.getElementById('monitoringSummary').innerHTML = `<div class="bg-blue-700 text-white rounded-xl p-6 shadow-lg relative overflow-hidden mb-6 border border-blue-600"><div class="absolute right-0 top-0 w-40 h-40 bg-blue-500 rounded-full blur-3xl opacity-30"></div><h2 class="text-[10px] md:text-xs text-blue-200 font-bold tracking-widest uppercase mb-6">Statistik Kabupaten Tapin</h2><div class="flex justify-between items-end"><div><p class="text-[10px] md:text-xs text-blue-300 font-semibold mb-1">TOTAL DATA</p><p class="font-black text-2xl md:text-3xl">${STATE.overall.total}</p></div><div class="text-right"><p class="text-[10px] md:text-xs text-rose-300 font-semibold mb-1">KOSONG</p><p class="font-black text-xl md:text-2xl">${STATE.overall.kosong}</p></div><div class="text-right"><p class="text-[10px] md:text-xs text-white font-semibold mb-1">SELESAI</p><p class="font-black text-xl md:text-2xl">${STATE.overall.isi}</p></div></div></div>`;
+      const listDiv = document.getElementById('monitoringList'); listDiv.innerHTML = '<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sebaran Wilayah</h3></div>';
+      Object.keys(STATE.config).sort().forEach(kec => { listDiv.innerHTML += `<div onclick="renderMonitoringDesa('${kec}')" class="card p-5 flex justify-between items-center cursor-pointer hover:border-blue-500"><div><h3 class="font-black text-slate-800 text-sm">${kec}</h3>${renderStats(STATE.config[kec])}</div><i class="fa-solid fa-chevron-right text-slate-300"></i></div>`; });
       saveStateCache();
     }
 
     function renderMonitoringDesa(kec) {
-      STATE.view = 'DESA'; STATE.kec = kec;
-      document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec;
-      document.getElementById('appSubtitle').innerText = 'Daftar Sub-Wilayah';
-      document.getElementById('monitoringSummary').innerHTML = ''; 
-      const listDiv = document.getElementById('monitoringList');
-      listDiv.innerHTML = `<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sub-Wilayah di ${kec}</h3></div>`;
-      Object.keys(STATE.config[kec].desas).sort().forEach(desa => {
-        listDiv.innerHTML += `<div class="card p-5 border-l-4 border-l-slate-800 cursor-default"><h3 class="font-bold text-slate-800 text-sm">${desa}</h3>${renderStats(STATE.config[kec].desas[desa])}</div>`;
-      });
+      STATE.view = 'DESA'; STATE.kec = kec; document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec; document.getElementById('appSubtitle').innerText = 'Daftar Sub-Wilayah'; document.getElementById('monitoringSummary').innerHTML = ''; 
+      const listDiv = document.getElementById('monitoringList'); listDiv.innerHTML = `<div class="col-span-full"><h3 class="text-[11px] font-black text-slate-400 uppercase tracking-widest pl-1 mb-2">Sub-Wilayah di ${kec}</h3></div>`;
+      Object.keys(STATE.config[kec].desas).sort().forEach(desa => { listDiv.innerHTML += `<div class="card p-5 border-l-4 border-l-slate-800 cursor-default"><h3 class="font-bold text-slate-800 text-sm">${desa}</h3>${renderStats(STATE.config[kec].desas[desa])}</div>`; });
       saveStateCache();
     }
 
     function renderInputKec() {
-      STATE.view = 'KEC'; document.getElementById('btnBack').classList.add('hidden');
-      document.getElementById('inputListTitle').innerHTML = '';
-      const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
-      Object.keys(STATE.config).sort().forEach(kec => {
-        listDiv.innerHTML += `<div onclick="renderInputDesa('${kec}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer hover:border-blue-500 transition"><div><h3 class="font-black text-slate-800 text-sm md:text-base">${kec}</h3></div><div class="bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center text-blue-600"><i class="fa-solid fa-arrow-right"></i></div></div>`;
-      });
+      STATE.view = 'KEC'; document.getElementById('btnBack').classList.add('hidden'); document.getElementById('inputListTitle').innerHTML = ''; const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
+      Object.keys(STATE.config).sort().forEach(kec => { listDiv.innerHTML += `<div onclick="renderInputDesa('${kec}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer hover:border-blue-500 transition"><div><h3 class="font-black text-slate-800 text-sm md:text-base">${kec}</h3></div><div class="bg-blue-50 w-8 h-8 rounded-full flex items-center justify-center text-blue-600"><i class="fa-solid fa-arrow-right"></i></div></div>`; });
       saveStateCache();
     }
 
     function renderInputDesa(kec) {
-      STATE.view = 'DESA'; STATE.kec = kec;
-      document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec;
-      document.getElementById('appSubtitle').innerText = 'Pilih Sub-Wilayah';
-      document.getElementById('inputListTitle').innerHTML = `<h3 class="text-[11px] font-black text-blue-700 uppercase tracking-widest pl-1 mb-1 mt-2">Pilih Wilayah ${kec}</h3>`;
-      const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
-      Object.keys(STATE.config[kec].desas).sort().forEach(desa => {
-        let kosong = STATE.config[kec].desas[desa].kosong;
-        listDiv.innerHTML += `<div onclick="loadInputRows('${kec}', '${desa}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer border-l-4 border-l-blue-600 transition"><div><h3 class="font-bold text-slate-800 text-sm md:text-base">${desa}</h3><p class="text-[10px] md:text-xs text-rose-500 font-bold mt-1">${kosong} Data Kosong</p></div><button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold shadow-sm transition">BUKA</button></div>`;
-      });
+      STATE.view = 'DESA'; STATE.kec = kec; document.getElementById('btnBack').classList.remove('hidden'); document.getElementById('appTitle').innerText = kec; document.getElementById('appSubtitle').innerText = 'Pilih Sub-Wilayah'; document.getElementById('inputListTitle').innerHTML = `<h3 class="text-[11px] font-black text-blue-700 uppercase tracking-widest pl-1 mb-1 mt-2">Pilih Wilayah ${kec}</h3>`; const listDiv = document.getElementById('inputList'); listDiv.innerHTML = '';
+      Object.keys(STATE.config[kec].desas).sort().forEach(desa => { let kosong = STATE.config[kec].desas[desa].kosong; listDiv.innerHTML += `<div onclick="loadInputRows('${kec}', '${desa}')" class="card p-4 md:p-5 flex justify-between items-center cursor-pointer border-l-4 border-l-blue-600 transition"><div><h3 class="font-bold text-slate-800 text-sm md:text-base">${desa}</h3><p class="text-[10px] md:text-xs text-rose-500 font-bold mt-1">${kosong} Data Kosong</p></div><button class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded text-xs font-bold shadow-sm transition">BUKA</button></div>`; });
       saveStateCache();
     }
 
     function loadInputRows(kec, desa) {
-      STATE.view = 'ROWS'; STATE.desa = desa;
-      document.getElementById('appTitle').innerText = desa;
-      document.getElementById('appSubtitle').innerText = 'Daftar Data';
-      document.getElementById('inputListTitle').innerHTML = '';
-      const listDiv = document.getElementById('inputList');
+      STATE.view = 'ROWS'; STATE.desa = desa; document.getElementById('appTitle').innerText = desa; document.getElementById('appSubtitle').innerText = 'Daftar Data'; document.getElementById('inputListTitle').innerHTML = ''; const listDiv = document.getElementById('inputList');
       listDiv.innerHTML = `<div class="col-span-full flex flex-col items-center py-12 text-blue-600"><i class="fa-solid fa-spinner fa-spin text-3xl mb-3"></i><p class="text-xs font-bold uppercase tracking-widest">Memuat Tugas...</p></div>`;
       apiFetch('getRows', {kec, desa}).then(res => {
-        if(res.status === 'error') throw new Error(res.message);
-        listDiv.innerHTML = '';
+        if(res.status === 'error') throw new Error(res.message); listDiv.innerHTML = '';
         res.data.forEach(item => {
           const isDone = item.status === 'SELESAI';
           listDiv.innerHTML += `<div class="card p-4 flex justify-between items-center bg-white ${isDone ? 'opacity-70 border-slate-200' : 'border-l-4 border-l-blue-600 shadow-md'}"><div class="overflow-hidden mr-3 flex-1"><div class="flex gap-2 mb-1"><p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest bg-slate-100 px-1.5 py-0.5 rounded">Baris ${item.rowIndex}</p><p class="text-[9px] text-blue-700 font-bold uppercase tracking-widest bg-blue-50 px-1.5 py-0.5 rounded border border-blue-100">RT ${item.rt}</p></div><h3 class="font-bold text-slate-900 text-sm md:text-base truncate uppercase">${item.namaPengurus}</h3></div><button onclick='openForm(${JSON.stringify(item)})' class="${isDone ? 'bg-slate-200 text-slate-600' : 'btn-primary'} px-4 py-2 rounded-lg text-xs md:text-sm font-bold uppercase tracking-widest hover:scale-105 transition">FORM</button></div>`;
-        });
-        saveStateCache();
-      }).catch(err => {
-        listDiv.innerHTML = `<div class="col-span-full text-center text-rose-600 font-bold p-4 bg-rose-50 rounded">Gagal mengambil data: ${err.message}</div>`;
-      });
+        }); saveStateCache();
+      }).catch(err => { listDiv.innerHTML = `<div class="col-span-full text-center text-rose-600 font-bold p-4 bg-rose-50 rounded">Gagal mengambil data: ${err.message}</div>`; });
     }
 
     function openForm(item) {
       activeRowIndex = item.rowIndex; pendingChanges = false; 
       const cachedData = JSON.parse(localStorage.getItem(`pkh_form_${activeRowIndex}`)) || {};
-      document.getElementById('modalTitle').innerText = item.namaPengurus;
-      document.getElementById('modalSubtitle').innerText = `BARIS ${item.rowIndex} • RT ${item.rt} • ${STATE.desa}`;
-      const form = document.getElementById('dataForm');
-      form.innerHTML = `<input type="hidden" id="formRowIndex" value="${item.rowIndex}">`;
+      document.getElementById('modalTitle').innerText = item.namaPengurus; document.getElementById('modalSubtitle').innerText = `BARIS ${item.rowIndex} • RT ${item.rt} • ${STATE.desa}`;
+      const form = document.getElementById('dataForm'); form.innerHTML = `<input type="hidden" id="formRowIndex" value="${item.rowIndex}">`;
       
       STATE.headers.forEach((h, i) => {
         let val = cachedData[i] !== undefined ? cachedData[i] : (item.data[i] || "");
-        const isColumnAN = i <= 13; 
+        
+        // AMBIL ATURAN DARI STATE RULES YANG DISIMPAN ADMIN
+        const rule = STATE.rules[i] || { isLocked: false, type: 'text', options: '' };
+        
         const hasData = item.data[i].toString().trim() !== "";
-        const isLocked = isColumnAN && hasData; 
-        const isPhoto = h.toLowerCase().includes('foto');
-        const isKesesuaian = h.toUpperCase().includes('KESE');
+        const isLocked = rule.isLocked && hasData; 
 
         let fieldHtml = '';
-        if (isPhoto) {
+        if (rule.type === 'photo') {
           const isChecked = cachedData[`skip_${i}`] ? 'checked' : '';
           let oldLinkHtml = '';
-          if (val !== "" && val !== "-" && val.includes("http")) {
-              oldLinkHtml = `<a href="${val}" target="_blank" class="text-blue-600 underline text-[10px] ml-2 bg-blue-50 px-2 py-1 rounded font-bold hover:bg-blue-100 transition"><i class="fa-solid fa-up-right-from-square mr-1"></i>Cek Foto</a>`;
-          } else if (val === "-") {
-              oldLinkHtml = `<span class="text-slate-400 text-[10px] ml-2 bg-slate-100 px-2 py-1 rounded font-bold"><i class="fa-solid fa-ban mr-1"></i>Abaikan</span>`;
-          }
-          if (isLocked) {
-             fieldHtml = `<div class="w-full flex items-center justify-center gap-2 p-3 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-xs font-bold"><i class="fa-solid fa-lock text-slate-400"></i> MASTER TERKUNCI</div>`;
-          } else {
+          if (val !== "" && val !== "-" && val.includes("http")) { oldLinkHtml = `<a href="${val}" target="_blank" class="text-blue-600 underline text-[10px] ml-2 bg-blue-50 px-2 py-1 rounded font-bold hover:bg-blue-100 transition"><i class="fa-solid fa-up-right-from-square mr-1"></i>Cek Foto</a>`; } 
+          else if (val === "-") { oldLinkHtml = `<span class="text-slate-400 text-[10px] ml-2 bg-slate-100 px-2 py-1 rounded font-bold"><i class="fa-solid fa-ban mr-1"></i>Abaikan</span>`; }
+          
+          if (isLocked) { fieldHtml = `<div class="w-full flex items-center justify-center gap-2 p-3 bg-slate-100 border border-slate-200 rounded-lg text-slate-500 text-xs font-bold"><i class="fa-solid fa-lock text-slate-400"></i> MASTER TERKUNCI</div>`; } 
+          else {
              fieldHtml = `<div id="photoWrap_${i}" class="photo-wrap w-full mt-1"><label class="flex flex-col items-center justify-center w-full p-3 border border-blue-400 border-dashed rounded-lg bg-blue-50 text-blue-700 cursor-pointer hover:bg-blue-100 transition active:scale-95"><div class="flex items-center gap-2"><i class="fa-solid fa-camera text-lg"></i><span class="text-xs md:text-sm font-bold">Pilih / Ganti Foto</span></div><input type="file" accept="image/*" id="inputCol_${i}" data-old='${val}' class="hidden" onchange="document.getElementById('lbl_file_${i}').innerText = this.files[0] ? this.files[0].name : ''; markFormChanged();"></label><div id="lbl_file_${i}" class="text-[10px] text-blue-600 font-bold mt-1 text-center truncate"></div></div><label class="flex items-center gap-2 mt-2 cursor-pointer bg-slate-50 p-2.5 rounded-lg border border-slate-200 hover:bg-slate-100 transition w-full"><input type="checkbox" id="skipPhoto_${i}" onchange="toggleSkipPhoto(${i})" ${isChecked} class="w-4 h-4 text-blue-600 rounded border-slate-300 focus:ring-blue-500"><span class="text-xs font-bold text-slate-700">Tandai: Tidak perlu foto</span></label>`;
           }
-        } else if (isKesesuaian && !isLocked) {
-          fieldHtml = `
-            <select id="inputCol_${i}" onchange="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-white">
-              <option value="" ${val === "" ? "selected" : ""}>-- Pilih Status --</option>
-              <option value="SESUAI" ${val === "SESUAI" ? "selected" : ""}>SESUAI</option>
-              <option value="TIDAK SESUAI" ${val === "TIDAK SESUAI" ? "selected" : ""}>TIDAK SESUAI</option>
-            </select>`;
-        } else if (isKesesuaian && isLocked) {
+        } else if (rule.type === 'dropdown' && !isLocked) {
+          const opts = rule.options.split(',').map(o => o.trim());
+          let optHtml = `<option value="" ${val === "" ? "selected" : ""}>-- Pilih Status --</option>`;
+          opts.forEach(o => { if(o) optHtml += `<option value="${o}" ${val === o ? "selected" : ""}>${o}</option>`; });
+          fieldHtml = `<select id="inputCol_${i}" onchange="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-white">${optHtml}</select>`;
+        } else if (rule.type === 'number' && !isLocked) {
+          fieldHtml = `<input type="number" id="inputCol_${i}" value="${val}" oninput="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none" placeholder="Isi dengan Angka...">`;
+        } else if (isLocked) {
           fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" readonly class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none bg-slate-50 text-slate-500">`;
         } else {
-          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" ${isLocked ? 'readonly' : 'oninput="markFormChanged()"'} class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none" placeholder="Ketik data...">`;
+          fieldHtml = `<input type="text" id="inputCol_${i}" value="${val}" oninput="markFormChanged()" class="w-full p-3 rounded-lg text-sm md:text-base font-semibold transition border border-blue-400 focus:ring-2 focus:ring-blue-200 focus:outline-none" placeholder="Ketik data...">`;
         }
         
-        form.innerHTML += `<div class="flex flex-col gap-1.5 p-3 bg-white border border-slate-200 rounded-xl shadow-sm"><label class="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between"><span>${h}</span>${isLocked ? '<span class="text-slate-400"><i class="fa-solid fa-lock mr-1"></i>MASTER</span>' : '<span class="text-blue-600"><i class="fa-solid fa-pen-to-square mr-1"></i>EDITABLE</span>'}</label>${fieldHtml}</div>`;
+        let labelIcon = isLocked ? '<span class="text-slate-400 bg-slate-100 px-2 py-0.5 rounded border border-slate-200"><i class="fa-solid fa-lock mr-1 text-[9px]"></i>MASTER</span>' : '<span class="text-blue-600 bg-blue-50 px-2 py-0.5 rounded border border-blue-200"><i class="fa-solid fa-pen-to-square mr-1 text-[9px]"></i>EDITABLE</span>';
+        if(isPhoto && val !== "" && val !== "-") labelIcon = oldLinkHtml + " " + labelIcon;
+
+        form.innerHTML += `<div class="flex flex-col gap-1.5 p-3 bg-white border border-slate-200 rounded-xl shadow-sm"><label class="text-[10px] md:text-[11px] font-black text-slate-500 uppercase tracking-widest flex items-center justify-between"><span>${h}</span><div class="flex items-center">${labelIcon}</div></label>${fieldHtml}</div>`;
       });
       document.getElementById('formModal').classList.remove('hidden'); document.getElementById('formModal').classList.add('flex');
       setTimeout(() => { STATE.headers.forEach((h, i) => { const cb = document.getElementById(`skipPhoto_${i}`); if (cb && cb.checked) toggleSkipPhoto(i); }); }, 50);
@@ -601,7 +601,7 @@
             } else { updates[i] = input.value; }
           }
         }
-        const res = await apiPost('submitData', { rowIndex: activeRowIndex, updates });
+        const res = await apiPost('submitData', { rowIndex: activeRowIndex, updates: updates, rules: STATE.rules });
         if(res.status === 'error') throw new Error(res.message);
         localStorage.removeItem(`pkh_form_${activeRowIndex}`);
         alert("✅ SUKSES: Sinkronisasi Final Berhasil!"); closeForm(); syncData(); 
